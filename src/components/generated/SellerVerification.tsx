@@ -19,42 +19,42 @@ export const SellerVerification = ({
     id: 1,
     label: "Business Registration",
     completed: false,
-    mpid: "ec3ca323-dac7-444c-a293-fa4b22def6b5"
+    mpid: "2799b3f5-e234-4a19-948b-c0f494da9897"
   }, {
     id: 2,
     label: "Financial Records",
     completed: false,
-    mpid: "0758f5c7-aec3-4462-9793-a32a7c67bb9d"
+    mpid: "600f26d4-9c8a-4acf-926d-c1b234f53b6d"
   }, {
     id: 3,
     label: "Identity Verification",
     completed: false,
-    mpid: "9d5b9bb2-4b93-4c9d-a1b0-83310b54f7bc"
+    mpid: "d0afbb02-8002-40f0-b763-fc1b0864a5c1"
   }, {
     id: 4,
     label: "Background Check",
     completed: false,
-    mpid: "34bd828f-af43-42f4-a055-510e679af927"
+    mpid: "32907bee-87c4-4e5a-ae7a-3c37b9e6353c"
   }, {
     id: 5,
     label: "Credit Score",
     completed: false,
-    mpid: "8f545a7e-3cce-48d4-a2a2-4e0569b1ea46"
+    mpid: "0eb668ae-3bdd-4935-9b53-5d160e4782ab"
   }, {
     id: 6,
     label: "Legal Compliance",
     completed: false,
-    mpid: "4491f7de-b32d-46ea-950a-6dad9e9b1fe1"
+    mpid: "0a9b020e-4d55-42c2-b8db-95dd92c78a06"
   }, {
     id: 7,
     label: "Tax Records",
     completed: false,
-    mpid: "e6a3a2ac-7831-4d09-8432-10a9109fefac"
+    mpid: "78baebeb-c256-430c-b0ca-91f3aa68acfd"
   }, {
     id: 8,
     label: "Business Performance",
     completed: false,
-    mpid: "0b16d5eb-71ab-4192-ab5b-62fbdcd0be4c"
+    mpid: "6a14cc18-844d-4472-ace7-3733d89cbfdb"
   }]);
   const [currentCheckIndex, setCurrentCheckIndex] = useState(0);
   const [allComplete, setAllComplete] = useState(false);
@@ -79,21 +79,21 @@ export const SellerVerification = ({
   }, [isOpen, checks.length]);
   if (!isOpen) return null;
   return <>
-      <SortableContainer dndKitId="b517cd59-b311-4b21-82d8-bea55be349cc" containerType="regular" prevTag="div" className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" data-magicpath-id="0" data-magicpath-path="SellerVerification.tsx">
-        <SortableContainer dndKitId="1ceebc9f-b9ea-45ae-8c15-0e9c97825ed4" containerType="regular" prevTag="div" className="bg-[#0a0f1a] rounded-2xl w-full max-w-lg border border-gray-800" data-magicpath-id="1" data-magicpath-path="SellerVerification.tsx">
+      <SortableContainer dndKitId="134e4cf9-3f01-46d2-a0ce-db05a287fb99" containerType="regular" prevTag="div" className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" data-magicpath-id="0" data-magicpath-path="SellerVerification.tsx">
+        <SortableContainer dndKitId="7971ed2b-ce58-4c24-b669-a6f6f521d9d6" containerType="regular" prevTag="div" className="bg-[#0a0f1a] rounded-2xl w-full max-w-lg border border-gray-800" data-magicpath-id="1" data-magicpath-path="SellerVerification.tsx">
           {/* Header */}
-          <SortableContainer dndKitId="b71a4a74-c508-41ff-ade4-a4eee0f48db3" containerType="regular" prevTag="div" className="flex items-center justify-between px-6 py-5 border-b border-gray-800" data-magicpath-id="2" data-magicpath-path="SellerVerification.tsx">
-            <SortableContainer dndKitId="5fc21382-8f5c-4d2d-9138-a29055f49c3c" containerType="regular" prevTag="div" data-magicpath-id="3" data-magicpath-path="SellerVerification.tsx">
+          <SortableContainer dndKitId="3cad779f-ea0f-4bbc-a564-4b6fde635f5a" containerType="regular" prevTag="div" className="flex items-center justify-between px-6 py-5 border-b border-gray-800" data-magicpath-id="2" data-magicpath-path="SellerVerification.tsx">
+            <SortableContainer dndKitId="b20953f7-7887-428b-bb6a-51dd2742e3e5" containerType="regular" prevTag="div" data-magicpath-id="3" data-magicpath-path="SellerVerification.tsx">
               <h2 className="text-2xl font-bold text-white" data-magicpath-id="4" data-magicpath-path="SellerVerification.tsx">Seller Verification</h2>
               <p className="text-gray-400 text-sm mt-1" data-magicpath-id="5" data-magicpath-path="SellerVerification.tsx">Analyzing: {sellerName}</p>
             </SortableContainer>
-            <SortableContainer dndKitId="f78651d2-b875-4317-8d6a-08f00975c619" containerType="regular" prevTag="button" onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors" data-magicpath-id="6" data-magicpath-path="SellerVerification.tsx">
+            <SortableContainer dndKitId="ccbf973d-0f0e-4070-91e2-7298a329962e" containerType="regular" prevTag="button" onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors" data-magicpath-id="6" data-magicpath-path="SellerVerification.tsx">
               <X className="w-5 h-5 text-white" data-magicpath-id="7" data-magicpath-path="SellerVerification.tsx" />
             </SortableContainer>
           </SortableContainer>
 
           {/* Verification Checks */}
-          <SortableContainer dndKitId="02fc19df-dc5d-45c1-8ea3-a1e3022a0bde" containerType="collection" prevTag="div" className="px-6 py-6 space-y-3" data-magicpath-id="8" data-magicpath-path="SellerVerification.tsx">
+          <SortableContainer dndKitId="9360289f-0159-4b5c-9368-8277faa03cda" containerType="collection" prevTag="div" className="px-6 py-6 space-y-3" data-magicpath-id="8" data-magicpath-path="SellerVerification.tsx">
             {checks.map((check, index) => <div key={check.id} className={`flex items-center justify-between px-5 py-4 rounded-xl border transition-all ${check.completed ? "border-green-500/50 bg-green-500/10" : index === currentCheckIndex ? "border-[#4169E1] bg-[#4169E1]/10" : "border-gray-700 bg-[#1a2332]"}`} data-magicpath-uuid={(check as any)["mpid"] ?? "unsafe"} data-magicpath-id="9" data-magicpath-path="SellerVerification.tsx">
                 <span className={`font-medium ${check.completed ? "text-green-400" : "text-gray-300"}`} data-magicpath-uuid={(check as any)["mpid"] ?? "unsafe"} data-magicpath-field="label:unknown" data-magicpath-id="10" data-magicpath-path="SellerVerification.tsx">
                   {check.label}
@@ -103,8 +103,8 @@ export const SellerVerification = ({
           </SortableContainer>
 
           {/* Result */}
-          {allComplete && <SortableContainer dndKitId="e4d1bdcc-ee44-44c4-9433-a3179fdf750f" containerType="regular" prevTag="div" className="px-6 pb-6" data-magicpath-id="14" data-magicpath-path="SellerVerification.tsx">
-              <SortableContainer dndKitId="faa2f012-c020-4db4-ae75-fb72af3fe574" containerType="regular" prevTag="div" className="bg-green-500/10 border border-green-500/50 rounded-xl px-5 py-4" data-magicpath-id="15" data-magicpath-path="SellerVerification.tsx">
+          {allComplete && <SortableContainer dndKitId="61a05a97-384e-422f-8e70-313142ad5046" containerType="regular" prevTag="div" className="px-6 pb-6" data-magicpath-id="14" data-magicpath-path="SellerVerification.tsx">
+              <SortableContainer dndKitId="2ef4cd26-38f6-4a17-91af-0218f3f33fe3" containerType="regular" prevTag="div" className="bg-green-500/10 border border-green-500/50 rounded-xl px-5 py-4" data-magicpath-id="15" data-magicpath-path="SellerVerification.tsx">
                 <p className="text-green-400 font-semibold text-center" data-magicpath-id="16" data-magicpath-path="SellerVerification.tsx">
                   ✓ Seller Verified Successfully
                 </p>

@@ -21,7 +21,7 @@ export const ChatsScreen = ({
     time: "2m ago",
     unread: 2,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-    mpid: "739be136-b8d5-4a31-99bc-5d0d4b405006"
+    mpid: "bcb34061-d0bd-46ce-9b4c-1305155062c2"
   }, {
     id: 2,
     sellerName: "Sarah Williams",
@@ -30,7 +30,7 @@ export const ChatsScreen = ({
     time: "1h ago",
     unread: 0,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    mpid: "2b37ddc8-1478-42ec-aed9-0836fc6a48b3"
+    mpid: "98d5d957-f43d-4463-a324-96de07dca371"
   }, {
     id: 3,
     sellerName: "David Chen",
@@ -39,7 +39,7 @@ export const ChatsScreen = ({
     time: "3h ago",
     unread: 1,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-    mpid: "76079293-1505-4c6f-b0f4-dbb25808583a"
+    mpid: "cf18e3bb-f743-4a3b-a046-cd3b8abdc8eb"
   }, {
     id: 4,
     sellerName: "Emma Rodriguez",
@@ -48,7 +48,7 @@ export const ChatsScreen = ({
     time: "Yesterday",
     unread: 0,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
-    mpid: "8dbb08c7-7c9a-45f8-b1ec-7abe339ccd9c"
+    mpid: "4d53ecec-65b0-482a-b973-f6dab0e11ec7"
   }, {
     id: 5,
     sellerName: "Tom Anderson",
@@ -57,15 +57,15 @@ export const ChatsScreen = ({
     time: "2 days ago",
     unread: 0,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",
-    mpid: "52b8185e-db79-4596-9da9-c38252733e1b"
+    mpid: "26189461-ec22-44ba-9dba-5dacf64f57b7"
   }] as any[];
   if (!isOpen) return null;
-  return <SortableContainer dndKitId="4d74bad7-7581-42d8-9b25-308ccd798b3e" containerType="regular" prevTag="div" className="fixed inset-0 bg-black z-50" data-magicpath-id="0" data-magicpath-path="ChatsScreen.tsx">
+  return <SortableContainer dndKitId="23b3912f-65cc-47c7-aaea-2f3913803952" containerType="regular" prevTag="div" className="fixed inset-0 bg-black z-50" data-magicpath-id="0" data-magicpath-path="ChatsScreen.tsx">
       {/* Header */}
-      <SortableContainer dndKitId="2d385d6c-11ca-4bca-a6ca-db78298a8b7c" containerType="regular" prevTag="div" className="border-b border-gray-800 px-6 py-4" data-magicpath-id="1" data-magicpath-path="ChatsScreen.tsx">
-        <SortableContainer dndKitId="718e4bff-d32c-41b0-b599-fa30ad287117" containerType="regular" prevTag="div" className="max-w-[1400px] mx-auto flex items-center justify-between" data-magicpath-id="2" data-magicpath-path="ChatsScreen.tsx">
-          <SortableContainer dndKitId="a2a57c87-5070-46a5-ba78-aed8110aa841" containerType="regular" prevTag="div" className="flex items-center gap-3" data-magicpath-id="3" data-magicpath-path="ChatsScreen.tsx">
-            <SortableContainer dndKitId="a39fab72-1c9b-42e2-bbd3-c84386a40f5d" containerType="regular" prevTag="button" onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-900 rounded-lg transition-colors" data-magicpath-id="4" data-magicpath-path="ChatsScreen.tsx">
+      <SortableContainer dndKitId="3a036f89-2b93-4da2-ba92-b7da9731908b" containerType="regular" prevTag="div" className="border-b border-gray-800 px-6 py-4" data-magicpath-id="1" data-magicpath-path="ChatsScreen.tsx">
+        <SortableContainer dndKitId="305ca6af-d069-4589-9f84-eb347ec48407" containerType="regular" prevTag="div" className="max-w-[1400px] mx-auto flex items-center justify-between" data-magicpath-id="2" data-magicpath-path="ChatsScreen.tsx">
+          <SortableContainer dndKitId="6ccf6907-96b7-40ca-93ec-49be92c56251" containerType="regular" prevTag="div" className="flex items-center gap-3" data-magicpath-id="3" data-magicpath-path="ChatsScreen.tsx">
+            <SortableContainer dndKitId="1fe78b63-589b-448a-9e48-86fe33465115" containerType="regular" prevTag="button" onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-900 rounded-lg transition-colors" data-magicpath-id="4" data-magicpath-path="ChatsScreen.tsx">
               <X className="w-6 h-6 text-white" data-magicpath-id="5" data-magicpath-path="ChatsScreen.tsx" />
             </SortableContainer>
             <h1 className="text-2xl font-bold text-white" data-magicpath-id="6" data-magicpath-path="ChatsScreen.tsx">Messages</h1>
@@ -74,24 +74,24 @@ export const ChatsScreen = ({
       </SortableContainer>
 
       {/* Content */}
-      <SortableContainer dndKitId="6a4797fc-00c1-4148-ad84-bb41a079b9de" containerType="regular" prevTag="div" className="max-w-[1200px] mx-auto px-6 py-6" data-magicpath-id="7" data-magicpath-path="ChatsScreen.tsx">
+      <SortableContainer dndKitId="d366b8c1-d0c4-4a67-8418-759faed971b0" containerType="regular" prevTag="div" className="max-w-[1200px] mx-auto px-6 py-6" data-magicpath-id="7" data-magicpath-path="ChatsScreen.tsx">
         {/* Search */}
-        <SortableContainer dndKitId="c7fb14e3-c6c9-461b-a22d-8d2e3ef20759" containerType="regular" prevTag="div" className="mb-6" data-magicpath-id="8" data-magicpath-path="ChatsScreen.tsx">
-          <SortableContainer dndKitId="264d226f-c87a-4054-9061-0405850c7991" containerType="regular" prevTag="div" className="relative" data-magicpath-id="9" data-magicpath-path="ChatsScreen.tsx">
+        <SortableContainer dndKitId="67b12540-f8a6-4cd5-bd23-3e9d86749f14" containerType="regular" prevTag="div" className="mb-6" data-magicpath-id="8" data-magicpath-path="ChatsScreen.tsx">
+          <SortableContainer dndKitId="969f62d0-6283-4d8f-a705-eebe0e7df9ab" containerType="regular" prevTag="div" className="relative" data-magicpath-id="9" data-magicpath-path="ChatsScreen.tsx">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" data-magicpath-id="10" data-magicpath-path="ChatsScreen.tsx" />
             <input type="text" placeholder="Search conversations..." className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#4169E1] transition-colors" data-magicpath-id="11" data-magicpath-path="ChatsScreen.tsx" />
           </SortableContainer>
         </SortableContainer>
 
         {/* Chats List */}
-        <SortableContainer dndKitId="a4a916b2-468e-43ff-b67e-e279669b5ebd" containerType="collection" prevTag="div" className="space-y-2" data-magicpath-id="12" data-magicpath-path="ChatsScreen.tsx">
+        <SortableContainer dndKitId="ded2283d-0815-4690-bc9e-5025916018fb" containerType="collection" prevTag="div" className="space-y-2" data-magicpath-id="12" data-magicpath-path="ChatsScreen.tsx">
           {chats.map(chat => <div key={chat.id} className="bg-[#0B1A33] border border-gray-800 rounded-xl p-5 hover:border-[#4169E1] transition-all cursor-pointer" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="13" data-magicpath-path="ChatsScreen.tsx">
               <div className="flex items-start gap-4" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="14" data-magicpath-path="ChatsScreen.tsx">
                 {/* Avatar */}
                 <div className="relative flex-shrink-0" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="15" data-magicpath-path="ChatsScreen.tsx">
-                  <img src={chat.avatar} alt={chat.sellerName} className="w-14 h-14 rounded-full bg-gray-700" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="avatar:string" data-magicpath-id="16" data-magicpath-path="ChatsScreen.tsx" />
+                  <img src={chat.avatar} alt={chat.sellerName} className="w-14 h-14 rounded-full bg-gray-700" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="avatar:unknown" data-magicpath-id="16" data-magicpath-path="ChatsScreen.tsx" />
                   {chat.unread > 0 && <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#4169E1] rounded-full flex items-center justify-center" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="17" data-magicpath-path="ChatsScreen.tsx">
-                      <span className="text-white text-xs font-bold" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="unread:number" data-magicpath-id="18" data-magicpath-path="ChatsScreen.tsx">{chat.unread}</span>
+                      <span className="text-white text-xs font-bold" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="unread:unknown" data-magicpath-id="18" data-magicpath-path="ChatsScreen.tsx">{chat.unread}</span>
                     </div>}
                 </div>
 
@@ -99,12 +99,12 @@ export const ChatsScreen = ({
                 <div className="flex-1 min-w-0" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="19" data-magicpath-path="ChatsScreen.tsx">
                   <div className="flex items-start justify-between mb-1" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="20" data-magicpath-path="ChatsScreen.tsx">
                     <div data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-id="21" data-magicpath-path="ChatsScreen.tsx">
-                      <h3 className="text-white font-semibold text-lg" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="sellerName:string" data-magicpath-id="22" data-magicpath-path="ChatsScreen.tsx">{chat.sellerName}</h3>
-                      <p className="text-[#4169E1] text-sm" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="businessName:string" data-magicpath-id="23" data-magicpath-path="ChatsScreen.tsx">{chat.businessName}</p>
+                      <h3 className="text-white font-semibold text-lg" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="sellerName:unknown" data-magicpath-id="22" data-magicpath-path="ChatsScreen.tsx">{chat.sellerName}</h3>
+                      <p className="text-[#4169E1] text-sm" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="businessName:unknown" data-magicpath-id="23" data-magicpath-path="ChatsScreen.tsx">{chat.businessName}</p>
                     </div>
-                    <span className="text-gray-400 text-sm flex-shrink-0" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="time:string" data-magicpath-id="24" data-magicpath-path="ChatsScreen.tsx">{chat.time}</span>
+                    <span className="text-gray-400 text-sm flex-shrink-0" data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="time:unknown" data-magicpath-id="24" data-magicpath-path="ChatsScreen.tsx">{chat.time}</span>
                   </div>
-                  <p className={`text-sm truncate ${chat.unread > 0 ? 'text-white font-medium' : 'text-gray-400'}`} data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="lastMessage:string" data-magicpath-id="25" data-magicpath-path="ChatsScreen.tsx">
+                  <p className={`text-sm truncate ${chat.unread > 0 ? 'text-white font-medium' : 'text-gray-400'}`} data-magicpath-uuid={(chat as any)["mpid"] ?? "unsafe"} data-magicpath-field="lastMessage:unknown" data-magicpath-id="25" data-magicpath-path="ChatsScreen.tsx">
                     {chat.lastMessage}
                   </p>
                 </div>
@@ -113,7 +113,7 @@ export const ChatsScreen = ({
         </SortableContainer>
 
         {/* Empty State (if no chats) */}
-        {chats.length === 0 && <SortableContainer dndKitId="1c707efd-5e27-4930-9a98-78e10e5254b4" containerType="regular" prevTag="div" className="text-center py-20" data-magicpath-id="26" data-magicpath-path="ChatsScreen.tsx">
+        {chats.length === 0 && <SortableContainer dndKitId="78db15a7-9a76-4f7b-9a67-687ddcb7920b" containerType="regular" prevTag="div" className="text-center py-20" data-magicpath-id="26" data-magicpath-path="ChatsScreen.tsx">
             <MessageCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" data-magicpath-id="27" data-magicpath-path="ChatsScreen.tsx" />
             <h3 className="text-xl font-semibold text-white mb-2" data-magicpath-id="28" data-magicpath-path="ChatsScreen.tsx">No conversations yet</h3>
             <p className="text-gray-400" data-magicpath-id="29" data-magicpath-path="ChatsScreen.tsx">
