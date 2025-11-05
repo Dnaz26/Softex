@@ -112,53 +112,53 @@ export const InvestmentSurvey = ({
   };
   if (!isOpen) return null;
   return <>
-      <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" data-magicpath-id="0" data-magicpath-path="InvestmentSurvey.tsx">
-        <div className="bg-[#0a0f1a] rounded-2xl w-full max-w-2xl border border-gray-800" data-magicpath-id="1" data-magicpath-path="InvestmentSurvey.tsx">
+      <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div className="bg-[#0a0f1a] rounded-2xl w-full max-w-2xl border border-gray-800">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800" data-magicpath-id="2" data-magicpath-path="InvestmentSurvey.tsx">
-            <div data-magicpath-id="3" data-magicpath-path="InvestmentSurvey.tsx">
-              <h2 className="text-2xl font-bold text-white" data-magicpath-id="4" data-magicpath-path="InvestmentSurvey.tsx">Investment Preferences</h2>
-              <p className="text-gray-400 text-sm mt-1" data-magicpath-id="5" data-magicpath-path="InvestmentSurvey.tsx">Question {currentQuestion + 1} of {questions.length}</p>
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Investment Preferences</h2>
+              <p className="text-gray-400 text-sm mt-1">Question {currentQuestion + 1} of {questions.length}</p>
             </div>
-            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors" data-magicpath-id="6" data-magicpath-path="InvestmentSurvey.tsx">
-              <X className="w-5 h-5 text-white" data-magicpath-id="7" data-magicpath-path="InvestmentSurvey.tsx" />
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors">
+              <X className="w-5 h-5 text-white" />
             </button>
           </div>
 
           {/* Progress Bar */}
-          <div className="px-6 pt-4" data-magicpath-id="8" data-magicpath-path="InvestmentSurvey.tsx">
-            <div className="w-full bg-gray-800 rounded-full h-2" data-magicpath-id="9" data-magicpath-path="InvestmentSurvey.tsx">
+          <div className="px-6 pt-4">
+            <div className="w-full bg-gray-800 rounded-full h-2">
               <div className="bg-[#4169E1] h-2 rounded-full transition-all duration-300" style={{
               width: `${(currentQuestion + 1) / questions.length * 100}%`
-            }} data-magicpath-id="10" data-magicpath-path="InvestmentSurvey.tsx" />
+            }} />
             </div>
           </div>
 
           {/* Question */}
-          <div className="px-6 py-8" data-magicpath-id="11" data-magicpath-path="InvestmentSurvey.tsx">
-            <h3 className="text-xl font-semibold text-white mb-6" data-magicpath-id="12" data-magicpath-path="InvestmentSurvey.tsx">{currentQ.question}</h3>
+          <div className="px-6 py-8">
+            <h3 className="text-xl font-semibold text-white mb-6">{currentQ.question}</h3>
 
-            {currentQ.type === "text" && <input type="text" value={answers[currentQuestion] || ""} onChange={e => handleAnswer(e.target.value)} placeholder={currentQ.placeholder} className="w-full bg-[#1a2332] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#4169E1] transition-colors" data-magicpath-id="13" data-magicpath-path="InvestmentSurvey.tsx" />}
+            {currentQ.type === "text" && <input type="text" value={answers[currentQuestion] || ""} onChange={e => handleAnswer(e.target.value)} placeholder={currentQ.placeholder} className="w-full bg-[#1a2332] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#4169E1] transition-colors" />}
 
-            {currentQ.type === "textarea" && <textarea value={answers[currentQuestion] || ""} onChange={e => handleAnswer(e.target.value)} placeholder={currentQ.placeholder} rows={4} className="w-full bg-[#1a2332] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#4169E1] transition-colors resize-none" data-magicpath-id="14" data-magicpath-path="InvestmentSurvey.tsx" />}
+            {currentQ.type === "textarea" && <textarea value={answers[currentQuestion] || ""} onChange={e => handleAnswer(e.target.value)} placeholder={currentQ.placeholder} rows={4} className="w-full bg-[#1a2332] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#4169E1] transition-colors resize-none" />}
 
-            {currentQ.type === "select" && <div className="space-y-3" data-magicpath-id="15" data-magicpath-path="InvestmentSurvey.tsx">
-                {currentQ.options?.map(option => <button key={option} onClick={() => handleAnswer(option)} className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${answers[currentQuestion] === option ? "border-[#4169E1] bg-[#4169E1]/10 text-white" : "border-gray-700 bg-[#1a2332] text-gray-300 hover:border-gray-600"}`} data-magicpath-id="16" data-magicpath-path="InvestmentSurvey.tsx">
+            {currentQ.type === "select" && <div className="space-y-3">
+                {currentQ.options?.map(option => <button key={option} onClick={() => handleAnswer(option)} className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${answers[currentQuestion] === option ? "border-[#4169E1] bg-[#4169E1]/10 text-white" : "border-gray-700 bg-[#1a2332] text-gray-300 hover:border-gray-600"}`}>
                     {option}
                   </button>)}
               </div>}
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between px-6 py-5 border-t border-gray-800" data-magicpath-id="17" data-magicpath-path="InvestmentSurvey.tsx">
-            <button onClick={handlePrev} disabled={currentQuestion === 0} className="flex items-center gap-2 px-5 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-magicpath-id="18" data-magicpath-path="InvestmentSurvey.tsx">
-              <ChevronLeft className="w-5 h-5" data-magicpath-id="19" data-magicpath-path="InvestmentSurvey.tsx" />
+          <div className="flex items-center justify-between px-6 py-5 border-t border-gray-800">
+            <button onClick={handlePrev} disabled={currentQuestion === 0} className="flex items-center gap-2 px-5 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              <ChevronLeft className="w-5 h-5" />
               Previous
             </button>
 
-            <button onClick={handleNext} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4169E1] hover:bg-[#3557C1] text-white font-semibold transition-colors" data-magicpath-id="20" data-magicpath-path="InvestmentSurvey.tsx">
+            <button onClick={handleNext} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4169E1] hover:bg-[#3557C1] text-white font-semibold transition-colors">
               {currentQuestion === questions.length - 1 ? "Submit" : "Next"}
-              {currentQuestion < questions.length - 1 && <ChevronRight className="w-5 h-5" data-magicpath-id="21" data-magicpath-path="InvestmentSurvey.tsx" />}
+              {currentQuestion < questions.length - 1 && <ChevronRight className="w-5 h-5" />}
             </button>
           </div>
         </div>

@@ -651,61 +651,61 @@ export const AllListings = ({
     setSelectedBusiness(listing);
   };
   if (selectedBusiness) {
-    return <BusinessDetails business={selectedBusiness} onBack={() => setSelectedBusiness(null)} data-magicpath-id="0" data-magicpath-path="AllListings.tsx" />;
+    return <BusinessDetails business={selectedBusiness} onBack={() => setSelectedBusiness(null)} />;
   }
-  return <div className="min-h-screen bg-black text-white" data-magicpath-id="1" data-magicpath-path="AllListings.tsx">
+  return <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="border-b border-gray-900 px-6 py-4" data-magicpath-id="2" data-magicpath-path="AllListings.tsx">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between" data-magicpath-id="3" data-magicpath-path="AllListings.tsx">
-          <button onClick={onBack} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors" data-magicpath-id="4" data-magicpath-path="AllListings.tsx">
-            <ArrowLeft className="w-6 h-6" data-magicpath-id="5" data-magicpath-path="AllListings.tsx" />
+      <header className="border-b border-gray-900 px-6 py-4">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
+            <ArrowLeft className="w-6 h-6" />
           </button>
 
-          <h1 className="text-2xl font-bold absolute left-1/2 -translate-x-1/2" data-magicpath-id="6" data-magicpath-path="AllListings.tsx">All Listings</h1>
+          <h1 className="text-2xl font-bold absolute left-1/2 -translate-x-1/2">All Listings</h1>
 
-          <div className="flex items-center gap-2" data-magicpath-id="7" data-magicpath-path="AllListings.tsx">
-            <button onClick={() => setShowFilters(!showFilters)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors relative" data-magicpath-id="8" data-magicpath-path="AllListings.tsx">
-              <Filter className="w-6 h-6 text-white" data-magicpath-id="9" data-magicpath-path="AllListings.tsx" />
-              {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full" data-magicpath-id="10" data-magicpath-path="AllListings.tsx" />}
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowFilters(!showFilters)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors relative">
+              <Filter className="w-6 h-6 text-white" />
+              {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full" />}
             </button>
 
-            <button onClick={() => setShowAIAdvisor(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors" data-magicpath-id="11" data-magicpath-path="AllListings.tsx">
+            <button onClick={() => setShowAIAdvisor(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
               <Sparkles className="w-6 h-6 text-white" />
             </button>
 
-            {isLoggedIn && userData ? <div className="flex items-center gap-2 ml-2" data-magicpath-id="12" data-magicpath-path="AllListings.tsx">
-                {userData.profilePicture ? <img src={userData.profilePicture} alt={userData.firstName} className="w-10 h-10 rounded-full object-cover border-2 border-blue-600" data-magicpath-id="13" data-magicpath-path="AllListings.tsx" /> : <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center" data-magicpath-id="14" data-magicpath-path="AllListings.tsx">
-                    <User className="w-5 h-5 text-white" data-magicpath-id="15" data-magicpath-path="AllListings.tsx" />
+            {isLoggedIn && userData ? <div className="flex items-center gap-2 ml-2">
+                {userData.profilePicture ? <img src={userData.profilePicture} alt={userData.firstName} className="w-10 h-10 rounded-full object-cover border-2 border-blue-600" /> : <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-white" />
                   </div>}
-                <span className="text-white font-medium" data-magicpath-id="16" data-magicpath-path="AllListings.tsx">{userData.firstName}</span>
+                <span className="text-white font-medium">{userData.firstName}</span>
               </div> : null}
 
-            <button onClick={() => setShowMenu(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors" data-magicpath-id="17" data-magicpath-path="AllListings.tsx">
-              <MenuIcon className="w-6 h-6" data-magicpath-id="18" data-magicpath-path="AllListings.tsx" />
+            <button onClick={() => setShowMenu(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
+              <MenuIcon className="w-6 h-6" />
             </button>
           </div>
         </div>
       </header>
 
       {/* Filter Panel */}
-      {showFilters && <div className="border-b border-gray-900 bg-[#0B1A33]" data-magicpath-id="19" data-magicpath-path="AllListings.tsx">
-          <div className="max-w-[1400px] mx-auto px-6 py-6" data-magicpath-id="20" data-magicpath-path="AllListings.tsx">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-magicpath-id="21" data-magicpath-path="AllListings.tsx">
+      {showFilters && <div className="border-b border-gray-900 bg-[#0B1A33]">
+          <div className="max-w-[1400px] mx-auto px-6 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Category Filter */}
-              <div data-magicpath-id="22" data-magicpath-path="AllListings.tsx">
-                <label className="block text-sm font-medium text-gray-300 mb-3" data-magicpath-id="23" data-magicpath-path="AllListings.tsx">Category</label>
-                <div className="flex flex-wrap gap-2" data-magicpath-id="24" data-magicpath-path="AllListings.tsx">
-                  {categories.map(cat => <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedCategory === cat ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`} data-magicpath-id="25" data-magicpath-path="AllListings.tsx">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Category</label>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map(cat => <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedCategory === cat ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`}>
                       {cat === 'all' ? 'All Categories' : cat}
                     </button>)}
                 </div>
               </div>
 
               {/* Price Filter */}
-              <div data-magicpath-id="26" data-magicpath-path="AllListings.tsx">
-                <label className="block text-sm font-medium text-gray-300 mb-3" data-magicpath-id="27" data-magicpath-path="AllListings.tsx">Price Range</label>
-                <div className="flex flex-wrap gap-2" data-magicpath-id="28" data-magicpath-path="AllListings.tsx">
-                  {priceRanges.map(range => <button key={range.value} onClick={() => setPriceRange(range.value)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${priceRange === range.value ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`} data-magicpath-id="29" data-magicpath-path="AllListings.tsx">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Price Range</label>
+                <div className="flex flex-wrap gap-2">
+                  {priceRanges.map(range => <button key={range.value} onClick={() => setPriceRange(range.value)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${priceRange === range.value ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`}>
                       {range.label}
                     </button>)}
                 </div>
@@ -713,11 +713,11 @@ export const AllListings = ({
             </div>
 
             {/* Clear Filters */}
-            {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="mt-4 flex justify-end" data-magicpath-id="30" data-magicpath-path="AllListings.tsx">
+            {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="mt-4 flex justify-end">
                 <button onClick={() => {
             setSelectedCategory('all');
             setPriceRange('all');
-          }} className="text-sm text-gray-400 hover:text-white transition-colors" data-magicpath-id="31" data-magicpath-path="AllListings.tsx">
+          }} className="text-sm text-gray-400 hover:text-white transition-colors">
                   Clear all filters
                 </button>
               </div>}
@@ -725,67 +725,67 @@ export const AllListings = ({
         </div>}
 
       {/* Main Content */}
-      <main className="max-w-[1400px] mx-auto px-6 py-8" data-magicpath-id="32" data-magicpath-path="AllListings.tsx">
-        {filteredListings.length === 0 ? <div className="text-center py-20" data-magicpath-id="33" data-magicpath-path="AllListings.tsx">
-            <p className="text-gray-400 text-lg" data-magicpath-id="34" data-magicpath-path="AllListings.tsx">No listings match your filters</p>
+      <main className="max-w-[1400px] mx-auto px-6 py-8">
+        {filteredListings.length === 0 ? <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">No listings match your filters</p>
             <button onClick={() => {
           setSelectedCategory('all');
           setPriceRange('all');
-        }} className="mt-4 text-blue-500 hover:text-blue-400 transition-colors" data-magicpath-id="35" data-magicpath-path="AllListings.tsx">
+        }} className="mt-4 text-blue-500 hover:text-blue-400 transition-colors">
               Clear filters
             </button>
-          </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-magicpath-id="36" data-magicpath-path="AllListings.tsx">
-            {filteredListings.map(listing => <div key={listing.id} className="bg-[#0B1A33] rounded-2xl overflow-hidden group cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition-all" onClick={() => handleViewDetails(listing)} data-magicpath-id="37" data-magicpath-path="AllListings.tsx">
+          </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredListings.map(listing => <div key={listing.id} className="bg-[#0B1A33] rounded-2xl overflow-hidden group cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition-all" onClick={() => handleViewDetails(listing)}>
               {/* Image */}
-              <div className="relative h-56" data-magicpath-id="38" data-magicpath-path="AllListings.tsx">
-                <img src={listing.image} alt={listing.title} className="w-full h-full object-cover" data-magicpath-id="39" data-magicpath-path="AllListings.tsx" />
+              <div className="relative h-56">
+                <img src={listing.image} alt={listing.title} className="w-full h-full object-cover" />
 
                 {/* Star Icon */}
                 <button onClick={e => {
               e.stopPropagation();
               handleBookmark(listing);
-            }} className="absolute top-3 left-3 w-9 h-9 bg-gray-900/80 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors" data-magicpath-id="40" data-magicpath-path="AllListings.tsx">
-                  <Star className={`w-5 h-5 ${bookmarkedIds.has(listing.id) ? 'text-yellow-500 fill-yellow-500' : 'text-white'}`} data-magicpath-id="41" data-magicpath-path="AllListings.tsx" />
+            }} className="absolute top-3 left-3 w-9 h-9 bg-gray-900/80 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors">
+                  <Star className={`w-5 h-5 ${bookmarkedIds.has(listing.id) ? 'text-yellow-500 fill-yellow-500' : 'text-white'}`} />
                 </button>
 
                 {/* Price Badge */}
-                <div className="absolute top-3 right-3 bg-[#0B1A33] px-4 py-2 rounded-full" data-magicpath-id="42" data-magicpath-path="AllListings.tsx">
-                  <span className="text-[#4169E1] font-bold text-lg" data-magicpath-id="43" data-magicpath-path="AllListings.tsx">{listing.price}</span>
+                <div className="absolute top-3 right-3 bg-[#0B1A33] px-4 py-2 rounded-full">
+                  <span className="text-[#4169E1] font-bold text-lg">{listing.price}</span>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-6" data-magicpath-id="44" data-magicpath-path="AllListings.tsx">
-                <div className="text-[#4169E1] text-xs font-bold mb-2 uppercase tracking-wide" data-magicpath-id="45" data-magicpath-path="AllListings.tsx">
+              <div className="p-6">
+                <div className="text-[#4169E1] text-xs font-bold mb-2 uppercase tracking-wide">
                   {listing.category}
                 </div>
 
-                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#4169E1] transition-colors" data-magicpath-id="46" data-magicpath-path="AllListings.tsx">
+                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#4169E1] transition-colors">
                   {listing.title}
                 </h3>
 
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed" data-magicpath-id="47" data-magicpath-path="AllListings.tsx">{listing.description}</p>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">{listing.description}</p>
 
                 {/* Stats */}
-                <div className="space-y-2 mb-5" data-magicpath-id="48" data-magicpath-path="AllListings.tsx">
-                  <div className="flex items-center gap-2 text-sm" data-magicpath-id="49" data-magicpath-path="AllListings.tsx">
-                    <MapPin className="w-4 h-4 text-gray-500" data-magicpath-id="50" data-magicpath-path="AllListings.tsx" />
-                    <span className="text-gray-300" data-magicpath-id="51" data-magicpath-path="AllListings.tsx">{listing.location}</span>
+                <div className="space-y-2 mb-5">
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-4 h-4 text-gray-500" />
+                    <span className="text-gray-300">{listing.location}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm" data-magicpath-id="52" data-magicpath-path="AllListings.tsx">
-                    <DollarSign className="w-4 h-4 text-gray-500" data-magicpath-id="53" data-magicpath-path="AllListings.tsx" />
-                    <span className="text-green-500 font-semibold" data-magicpath-id="54" data-magicpath-path="AllListings.tsx">{listing.revenue}</span>
+                  <div className="flex items-center gap-2 text-sm">
+                    <DollarSign className="w-4 h-4 text-gray-500" />
+                    <span className="text-green-500 font-semibold">{listing.revenue}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm" data-magicpath-id="55" data-magicpath-path="AllListings.tsx">
-                    <TrendingUp className="w-4 h-4 text-gray-500" data-magicpath-id="56" data-magicpath-path="AllListings.tsx" />
-                    <span className="text-gray-300" data-magicpath-id="57" data-magicpath-path="AllListings.tsx">Margin: {listing.margin}</span>
+                  <div className="flex items-center gap-2 text-sm">
+                    <TrendingUp className="w-4 h-4 text-gray-500" />
+                    <span className="text-gray-300">Margin: {listing.margin}</span>
                   </div>
                 </div>
 
                 {/* Button */}
-                <button className="w-full bg-[#4169E1] hover:bg-[#3557C1] text-white py-3.5 rounded-2xl font-semibold transition-colors" data-magicpath-id="58" data-magicpath-path="AllListings.tsx">
+                <button className="w-full bg-[#4169E1] hover:bg-[#3557C1] text-white py-3.5 rounded-2xl font-semibold transition-colors">
                   View Details
                 </button>
               </div>
@@ -794,13 +794,13 @@ export const AllListings = ({
       </main>
 
       {/* Panels */}
-      <AIAdvisorPanel isOpen={showAIAdvisor} onClose={() => setShowAIAdvisor(false)} onLogout={onLogout} data-magicpath-id="59" data-magicpath-path="AllListings.tsx" />
+      <AIAdvisorPanel isOpen={showAIAdvisor} onClose={() => setShowAIAdvisor(false)} onLogout={onLogout} />
       <MenuPanel isOpen={showMenu} onClose={() => setShowMenu(false)} savedListings={savedListings} onNavigateHome={onBack} onNavigateMyListings={() => {
       setShowMenu(false);
       alert('My Listings feature coming soon!');
     }} onNavigateSettings={() => {
       setShowMenu(false);
       alert('Settings feature coming soon!');
-    }} onLogout={onLogout} data-magicpath-id="60" data-magicpath-path="AllListings.tsx" />
+    }} onLogout={onLogout} />
     </div>;
 };
