@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, Menu as MenuIcon, MapPin, DollarSign, TrendingUp, Star, User, Filter } from 'lucide-react';
+import { ArrowLeft, Sparkles, Menu as MenuIcon, MapPin, DollarSign, TrendingUp, Star, Filter } from 'lucide-react';
 import { AIAdvisorPanel } from './AIAdvisorPanel';
 import { MenuPanel } from './MenuPanel';
 import { BusinessDetails } from './BusinessDetails';
@@ -672,13 +672,6 @@ export const AllListings = ({
             <button onClick={() => setShowAIAdvisor(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
               <Sparkles className="w-6 h-6 text-white" />
             </button>
-
-            {isLoggedIn && userData ? <div className="flex items-center gap-2 ml-2">
-                {userData.profilePicture ? <img src={userData.profilePicture} alt={userData.firstName} className="w-10 h-10 rounded-full object-cover border-2 border-blue-600" /> : <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
-                  </div>}
-                <span className="text-white font-medium">{userData.firstName}</span>
-              </div> : null}
 
             <button onClick={() => setShowMenu(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
               <MenuIcon className="w-6 h-6" />

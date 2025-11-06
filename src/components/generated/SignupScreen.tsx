@@ -53,35 +53,35 @@ export const SignupScreen = ({
     onClose();
   };
   if (!isOpen) return null;
-  return <div className="fixed inset-0 bg-black z-50 flex items-center justify-center overflow-y-auto">
+  return <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-y-auto">
       {/* Close Button */}
       <button onClick={onClose} className="fixed top-6 right-6 w-12 h-12 flex items-center justify-center hover:bg-gray-900 rounded-lg transition-colors z-10">
         <X className="w-6 h-6 text-white" />
       </button>
 
-      {/* Content - Added pt-8 for top padding */}
-      <div className="w-full max-w-[680px] px-6 py-16 my-8">
-        {/* Header - Moved "Create Account" inside visible area */}
-        <div className="bg-[#1E3A8A] rounded-t-3xl px-12 py-10">
-          <h1 className="text-5xl font-bold text-white mb-3">Create Account</h1>
-          <p className="text-xl text-blue-100">Join us to find your next investment</p>
+      {/* Content - Reduced size */}
+      <div className="w-full max-w-[500px] my-auto">
+        {/* Header - Reduced padding and text size - Always visible at top */}
+        <div className="bg-[#1E3A8A] rounded-t-3xl px-8 py-6 relative z-10">
+          <h1 className="text-3xl font-bold text-white mb-3 leading-tight">Create an Account</h1>
+          <p className="text-base text-blue-100 leading-relaxed">Join us to find your next investment</p>
         </div>
 
         {/* Form */}
-        <div className="bg-[#0a0f1a] rounded-b-3xl px-12 py-10">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-[#0a0f1a] rounded-b-3xl px-8 py-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Profile Picture */}
-            <div className="flex flex-col items-center mb-6">
+            <div className="flex flex-col items-center mb-4">
               <div className="relative">
-                <div className="w-32 h-32 bg-[#1E3A8A] rounded-full flex items-center justify-center overflow-hidden">
-                  {profilePicture ? <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" /> : <User className="w-16 h-16 text-white" />}
+                <div className="w-24 h-24 bg-[#1E3A8A] rounded-full flex items-center justify-center overflow-hidden">
+                  {profilePicture ? <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" /> : <User className="w-12 h-12 text-white" />}
                 </div>
-                <button type="button" onClick={handleProfilePictureClick} className="absolute bottom-0 right-0 w-11 h-11 bg-[#1E3A8A] rounded-full flex items-center justify-center border-4 border-[#0a0f1a] hover:bg-[#1E40AF] transition-colors">
-                  <Upload className="w-5 h-5 text-white" />
+                <button type="button" onClick={handleProfilePictureClick} className="absolute bottom-0 right-0 w-9 h-9 bg-[#1E3A8A] rounded-full flex items-center justify-center border-4 border-[#0a0f1a] hover:bg-[#1E40AF] transition-colors">
+                  <Upload className="w-4 h-4 text-white" />
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
               </div>
-              <p className="text-gray-400 mt-4 text-base">Upload profile picture</p>
+              <p className="text-gray-400 mt-3 text-sm">Upload profile picture</p>
             </div>
 
             {/* First Name */}
@@ -151,7 +151,7 @@ export const SignupScreen = ({
             </div>
 
             {/* Create Account Button */}
-            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white text-xl font-bold py-5 rounded-xl transition-colors mt-8">
+            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white text-lg font-bold py-4 rounded-xl transition-colors mt-6">
               Create Account
             </button>
 

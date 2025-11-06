@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { X, Check, Loader2 } from 'lucide-react';
+import { X, Check, XCircle, Loader2 } from 'lucide-react';
+import { analyzeSellerSecurity } from '../../lib/openai';
+
 type SellerVerificationProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -14,60 +16,31 @@ export const SellerVerification = ({
   onClose,
   sellerName
 }: SellerVerificationProps) => {
-  const [checks, setChecks] = useState([{
-    id: 1,
-    label: "Business Registration",
-    completed: false
-  }, {
-    id: 2,
-    label: "Financial Records",
-    completed: false
-  }, {
-    id: 3,
-    label: "Identity Verification",
-    completed: false
-  }, {
-    id: 4,
-    label: "Background Check",
-    completed: false
-  }, {
-    id: 5,
-    label: "Credit Score",
-    completed: false
-  }, {
-    id: 6,
-    label: "Legal Compliance",
-    completed: false
-  }, {
-    id: 7,
-    label: "Tax Records",
-    completed: false
-  }, {
-    id: 8,
-    label: "Business Performance",
-    completed: false
-  }]);
-  const [currentCheckIndex, setCurrentCheckIndex] = useState(0);
-  const [allComplete, setAllComplete] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [analysisResult, setAnalysisResult] = useState<{
+    isSecure: boolean;
+    confidence: number;
+    reasons: string[];
+    warnings: string[];
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (!isOpen) return;
-    const interval = setInterval(() => {
-      setCurrentCheckIndex(prevIndex => {
-        if (prevIndex < checks.length) {
-          setChecks(prevChecks => prevChecks.map((check, index) => index === prevIndex ? {
-            ...check,
-            completed: true
-          } : check));
-          return prevIndex + 1;
-        } else {
-          setAllComplete(true);
-          clearInterval(interval);
-          return prevIndex;
-        }
-      });
-    }, 800);
-    return () => clearInterval(interval);
-  }, [isOpen, checks.length]);
+    if (isOpen && sellerName) {
+      setIsAnalyzing(true);
+      setError(null);
+      analyzeSellerSecurity(sellerName)
+        .then((result) => {
+          setAnalysisResult(result);
+          setIsAnalyzing(false);
+        })
+        .catch((err) => {
+          console.error('Error analyzing seller:', err);
+          setError(err instanceof Error ? err.message : 'Failed to analyze seller');
+          setIsAnalyzing(false);
+        });
+    }
+  }, [isOpen, sellerName]);
   if (!isOpen) return null;
   return <>
       <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
@@ -83,30 +56,86 @@ export const SellerVerification = ({
             </button>
           </div>
 
-          {/* Verification Checks */}
-          <div className="px-6 py-6 space-y-3">
-            {checks.map((check, index) => <div key={check.id} className={`flex items-center justify-between px-5 py-4 rounded-xl border transition-all ${check.completed ? "border-green-500/50 bg-green-500/10" : index === currentCheckIndex ? "border-[#4169E1] bg-[#4169E1]/10" : "border-gray-700 bg-[#1a2332]"}`}>
-                <span className={`font-medium ${check.completed ? "text-green-400" : "text-gray-300"}`}>
-                  {check.label}
-                </span>
-                {check.completed ? <Check className="w-6 h-6 text-green-400" /> : index === currentCheckIndex ? <Loader2 className="w-6 h-6 text-[#4169E1] animate-spin" /> : <div className="w-6 h-6 rounded-full border-2 border-gray-600" />}
-              </div>)}
-          </div>
-
-          {/* Result */}
-          {allComplete && <div className="px-6 pb-6">
-              <div className="bg-green-500/10 border border-green-500/50 rounded-xl px-5 py-4">
-                <p className="text-green-400 font-semibold text-center">
-                  ✓ Seller Verified Successfully
-                </p>
-                <p className="text-gray-400 text-sm text-center mt-2">
-                  All checks passed. This seller is legitimate and trustworthy.
-                </p>
+          {/* Analysis Content */}
+          <div className="px-6 py-6">
+            {isAnalyzing ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-16 h-16 text-[#4169E1] animate-spin mb-4" />
+                <p className="text-white text-lg font-semibold">Analyzing seller/business...</p>
+                <p className="text-gray-400 text-sm mt-2">Checking financials, history, and legitimacy</p>
               </div>
-              <button onClick={onClose} className="w-full mt-4 bg-[#4169E1] hover:bg-[#3557C1] text-white py-3 rounded-xl font-semibold transition-colors">
-                Continue
-              </button>
-            </div>}
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <XCircle className="w-16 h-16 text-red-500 mb-4" />
+                <p className="text-white text-lg font-semibold mb-2">Analysis Error</p>
+                <p className="text-gray-400 text-center">{error}</p>
+              </div>
+            ) : analysisResult ? (
+              <div className="space-y-6">
+                {/* Result Header */}
+                <div className={`rounded-xl p-6 flex items-center justify-center gap-4 ${
+                  analysisResult.isSecure
+                    ? 'bg-green-500/10 border border-green-500/50'
+                    : 'bg-red-500/10 border border-red-500/50'
+                }`}>
+                  {analysisResult.isSecure ? (
+                    <>
+                      <Check className="w-12 h-12 text-green-400" />
+                      <div>
+                        <p className="text-green-400 font-bold text-2xl">Secure</p>
+                        <p className="text-gray-400 text-sm">Confidence: {analysisResult.confidence}%</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-12 h-12 text-red-400" />
+                      <div>
+                        <p className="text-red-400 font-bold text-2xl">Not Secure</p>
+                        <p className="text-gray-400 text-sm">Confidence: {analysisResult.confidence}%</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Reasons */}
+                {analysisResult.reasons.length > 0 && (
+                  <div className="bg-[#1a2332] rounded-xl p-5">
+                    <h3 className="text-white font-semibold mb-3">Analysis Results:</h3>
+                    <ul className="space-y-2">
+                      {analysisResult.reasons.map((reason, index) => (
+                        <li key={index} className="flex items-start gap-2 text-gray-300 text-sm">
+                          <span className="text-blue-400 mt-1">•</span>
+                          <span>{reason}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Warnings */}
+                {analysisResult.warnings.length > 0 && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-5">
+                    <h3 className="text-red-400 font-semibold mb-3">Warnings:</h3>
+                    <ul className="space-y-2">
+                      {analysisResult.warnings.map((warning, index) => (
+                        <li key={index} className="flex items-start gap-2 text-gray-300 text-sm">
+                          <span className="text-red-400 mt-1">⚠</span>
+                          <span>{warning}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <button
+                  onClick={onClose}
+                  className="w-full bg-[#4169E1] hover:bg-[#3557C1] text-white py-3 rounded-xl font-semibold transition-colors"
+                >
+                  Continue
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </>;

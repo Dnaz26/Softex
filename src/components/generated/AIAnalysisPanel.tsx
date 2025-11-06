@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, TrendingUp, AlertTriangle, CheckCircle2, DollarSign } from 'lucide-react';
+import { analyzeBusinessInvestment } from '../../lib/openai';
+
 type AIAnalysisPanelProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -22,44 +24,25 @@ export const AIAnalysisPanel = ({
 }: AIAnalysisPanelProps) => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (isOpen) {
       setIsAnalyzing(true);
+      setError(null);
+      setAnalysis(null);
 
-      // Simulate AI analysis
-      setTimeout(() => {
-        // Generate random but plausible analysis
-        const priceValue = parseInt(business.price.replace(/[$,]/g, ''));
-        const revenueValue = parseInt(business.revenue.replace(/[$,Kyear/]/g, '')) * 1000;
-        const marginValue = parseInt(business.margin.replace('%', ''));
-        const score = Math.floor(Math.random() * 30) + 70; // 70-100
-        const valuationRatio = priceValue / revenueValue;
-        let recommendation = 'Good Investment';
-        let risk = 'Low';
-        let valuation = 'Fair Price';
-        if (score >= 85) {
-          recommendation = 'High Potential';
-          risk = 'Low';
-          valuation = 'Good Price';
-        } else if (score >= 75) {
-          recommendation = 'Good Investment';
-          risk = 'Low to Medium';
-          valuation = 'Fair Price';
-        } else {
-          recommendation = 'Proceed with Caution';
-          risk = 'Medium';
-          valuation = 'Slightly Overvalued';
-        }
-        setAnalysis({
-          score,
-          recommendation,
-          risk,
-          valuation,
-          insights: [`Strong profit margin of ${marginValue}% indicates healthy operations`, `Established since ${business.established} provides business stability`, `Price-to-revenue ratio of ${valuationRatio.toFixed(2)}x is ${valuationRatio < 1 ? 'excellent' : valuationRatio < 1.5 ? 'competitive' : 'above market average'}`, 'Business shows consistent growth trajectory', 'Market conditions are favorable for this industry'],
-          concerns: score < 80 ? ['Consider requesting additional financial documentation', 'Verify customer retention rates'] : []
+      // Call OpenAI API for real analysis
+      analyzeBusinessInvestment(business)
+        .then((result) => {
+          setAnalysis(result);
+          setIsAnalyzing(false);
+        })
+        .catch((err) => {
+          console.error('Error analyzing business:', err);
+          setError(err instanceof Error ? err.message : 'Failed to analyze business');
+          setIsAnalyzing(false);
         });
-        setIsAnalyzing(false);
-      }, 3000);
     }
   }, [isOpen, business]);
   if (!isOpen) return null;
@@ -91,6 +74,13 @@ export const AIAnalysisPanel = ({
               </div>
               <p className="text-white text-xl font-semibold mt-6">Analyzing Investment...</p>
               <p className="text-gray-400 mt-2">Evaluating financials, market conditions, and risk factors</p>
+            </div> : error ? <div className="flex flex-col items-center justify-center py-16">
+              <AlertTriangle className="w-16 h-16 text-yellow-500 mb-4" />
+              <p className="text-white text-xl font-semibold mb-2">Analysis Error</p>
+              <p className="text-gray-400 text-center">{error}</p>
+              <p className="text-gray-500 text-sm mt-4 text-center">
+                Make sure VITE_OPENAI_API_KEY is set in your .env file
+              </p>
             </div> : analysis ? <div className="space-y-6">
               {/* Score Card */}
               <div className="bg-[#1a2942] rounded-2xl p-6">
