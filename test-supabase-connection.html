@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Connection Test</title>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <button onclick="testConnection()">Test Supabase Connection</button>
+    <div id="result"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        
+        const supabaseUrl = 'https://qmmzjkjnwkxwxgwcwspxv.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbXpram53a3h3eGd3Y21zcHh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MjI3MjYsImV4cCI6MjA3Nzk5ODcyNn0.5Z747QjslNUIFU0MYpFPHuBodYr-wmmPqMzdkAwh04A';
+        
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        window.testConnection = async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                // Test 1: Auth service
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                console.log('Session test:', { session, sessionError });
+                
+                // Test 2: Try to sign up a test user (will fail but shows connection works)
+                const { data: signupData, error: signupError } = await supabase.auth.signUp({
+                    email: 'test@example.com',
+                    password: 'testpassword123'
+                });
+                
+                resultDiv.innerHTML = `
+                    <h3>Connection Test Results:</h3>
+                    <p><strong>Status:</strong> ${signupError ? (signupError.message.includes('already registered') ? '✅ Connected (user exists)' : '⚠️ ' + signupError.message) : '✅ Connected!'}</p>
+                    <p><strong>URL:</strong> ${supabaseUrl}</p>
+                    <p><strong>Key Present:</strong> ${supabaseKey ? 'Yes' : 'No'}</p>
+                    <pre>${JSON.stringify({ signupError: signupError?.message, signupData: signupData?.user?.id }, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ Connection Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>This might mean:</p>
+                    <ul>
+                        <li>Supabase project is paused</li>
+                        <li>Network/CORS issue</li>
+                        <li>Invalid API key</li>
+                    </ul>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
+

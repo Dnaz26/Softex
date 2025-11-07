@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { X, User, Mail, Phone, Lock, Upload } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, User, Mail, Phone, Lock, Upload, Loader2 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { testSupabaseConnection } from '../../lib/test-supabase';
+
 type SignupScreenProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -26,10 +29,21 @@ export const SignupScreen = ({
   const [password, setPassword] = useState('');
   const [retypePassword, setRetypePassword] = useState('');
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Test connection when component mounts
+  useEffect(() => {
+    if (isOpen) {
+      testSupabaseConnection();
+    }
+  }, [isOpen]);
+  
   const handleProfilePictureClick = () => {
     fileInputRef.current?.click();
   };
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -40,17 +54,111 @@ export const SignupScreen = ({
       reader.readAsDataURL(file);
     }
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    
     if (password !== retypePassword) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
-    onSignupSuccess({
-      firstName,
-      profilePicture
-    });
-    onClose();
+    
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      console.log('🚀 Attempting to sign up user:', { email, firstName });
+      
+      // Sign up user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            phone: phone,
+          }
+        }
+      });
+      
+      console.log('📦 Signup response:', { authData, authError });
+      
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        throw authError;
+      }
+      
+      // Check if email confirmation is required
+      if (authData.user && !authData.session) {
+        // User created but needs email confirmation
+        setError('Account created! Please check your email to confirm your account before signing in.');
+        // Still call success to show user it worked
+        setTimeout(() => {
+          onSignupSuccess({
+            firstName,
+            profilePicture
+          });
+          onClose();
+        }, 2000);
+        return;
+      }
+      
+      if (authData.user) {
+        // Try to create user profile in database (table might not exist yet)
+        try {
+          const { error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              id: authData.user.id,
+              email: email,
+              first_name: firstName,
+              last_name: lastName,
+              phone: phone,
+              profile_picture: profilePicture,
+              created_at: new Date().toISOString(),
+            });
+          
+          if (profileError) {
+            console.warn('Profile table may not exist yet. Run the SQL setup file. Error:', profileError);
+            // Continue anyway - user is created in auth, profile can be added later
+          }
+        } catch (err) {
+          console.warn('Could not create profile. Make sure user_profiles table exists in Supabase.');
+        }
+        
+        // Call success callback
+        onSignupSuccess({
+          firstName,
+          profilePicture
+        });
+        onClose();
+      } else {
+        throw new Error('User creation failed. Please try again.');
+      }
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      
+      // Better error messages
+      let errorMessage = 'Failed to create account. Please try again.';
+      
+      if (err.message) {
+        errorMessage = err.message;
+      } else if (err instanceof TypeError && err.message.includes('fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (err.code === 'PGRST301' || err.message?.includes('relation') || err.message?.includes('does not exist')) {
+        errorMessage = 'Database setup required. Please contact support.';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
   if (!isOpen) return null;
   return <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-y-auto">
@@ -150,9 +258,27 @@ export const SignupScreen = ({
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+            )}
+
             {/* Create Account Button */}
-            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white text-lg font-bold py-4 rounded-xl transition-colors mt-6">
-              Create Account
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold py-4 rounded-xl transition-colors mt-6 flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
             </button>
 
             {/* Login Link */}

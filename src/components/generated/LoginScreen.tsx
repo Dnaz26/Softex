@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { X, Mail, Lock } from 'lucide-react';
+import { X, Mail, Lock, Loader2 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+
 type LoginScreenProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -21,14 +23,85 @@ export const LoginScreen = ({
 }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate successful login with mock data
-    onLoginSuccess({
-      firstName: "John",
-      profilePicture: null
-    });
-    onClose();
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      console.log('🚀 Attempting to sign in user:', { email });
+      
+      // Sign in with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      console.log('📦 Login response:', { authData, authError });
+      
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        throw authError;
+      }
+      
+      if (authData.user) {
+        // Try to get user profile from database
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('user_profiles')
+            .select('first_name, profile_picture')
+            .eq('id', authData.user.id)
+            .single();
+          
+          if (profileError || !profile) {
+            // Use auth user metadata as fallback
+            const firstName = authData.user.user_metadata?.first_name || 'User';
+            onLoginSuccess({
+              firstName,
+              profilePicture: null
+            });
+          } else {
+            onLoginSuccess({
+              firstName: profile.first_name || 'User',
+              profilePicture: profile.profile_picture
+            });
+          }
+        } catch (err) {
+          // Fallback to auth metadata if table doesn't exist
+          const firstName = authData.user.user_metadata?.first_name || 'User';
+          onLoginSuccess({
+            firstName,
+            profilePicture: null
+          });
+        }
+        
+        onClose();
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      
+      // Better error messages
+      let errorMessage = 'Invalid email or password. Please try again.';
+      
+      if (err.message) {
+        if (err.message.includes('Invalid login credentials')) {
+          errorMessage = 'Invalid email or password.';
+        } else if (err.message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof TypeError && err.message?.includes('fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
   if (!isOpen) return null;
   return <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
@@ -77,9 +150,27 @@ export const LoginScreen = ({
               </button>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+            )}
+
             {/* Sign In Button */}
-            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white text-xl font-bold py-5 rounded-xl transition-colors">
-              Sign In
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xl font-bold py-5 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
 
             {/* Sign Up Link */}
