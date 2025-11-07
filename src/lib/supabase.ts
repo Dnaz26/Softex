@@ -29,12 +29,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true
   },
   global: {
-    fetch: (url: string | URL | Request, options: RequestInit = {}) => {
-      console.log('🌐 Supabase Request:', { url, method: options.method });
+    fetch: (url: string | URL | Request, options?: RequestInit) => {
+      const fetchOptions: RequestInit = options || {};
+      console.log('🌐 Supabase Request:', { url, method: fetchOptions.method });
       return fetch(url, {
-        ...options,
+        ...fetchOptions,
         headers: {
-          ...options.headers,
+          ...(fetchOptions.headers || {}),
         },
       }).catch((error) => {
         console.error('❌ Fetch Error:', error);
