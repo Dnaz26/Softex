@@ -8,6 +8,7 @@ import { MenuPanel } from './MenuPanel';
 import { LoginScreen } from './LoginScreen';
 import { SignupScreen } from './SignupScreen';
 import { BusinessDetails } from './BusinessDetails';
+import { ProfileDashboard } from './ProfileDashboard';
 type SoftexLandingProps = {};
 
 // @component: SoftexLanding
@@ -17,6 +18,7 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [showProfileDashboard, setShowProfileDashboard] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [savedListings, setSavedListings] = useState<any[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
@@ -250,6 +252,14 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
     setIsLoggedIn(false);
     setUserData(null);
   };
+  const handleProfilePictureUpdate = (newPicture: string | null) => {
+    if (userData) {
+      setUserData({
+        ...userData,
+        profilePicture: newPicture
+      });
+    }
+  };
   if (selectedBusiness) {
     return <BusinessDetails business={selectedBusiness} onBack={() => setSelectedBusiness(null)} />;
   }
@@ -260,20 +270,18 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
       <header className="border-b border-gray-900 px-6 py-4">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-white rounded" />
-            </div>
             <span className="text-xl font-semibold">Softex</span>
           </div>
           <div className="flex items-center gap-4">
-            {isLoggedIn && userData ? <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  {userData.profilePicture ? <img src={userData.profilePicture} alt={userData.firstName} className="w-10 h-10 rounded-full object-cover border-2 border-blue-600" /> : <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
-                    </div>}
-                  <span className="text-white font-medium">{userData.firstName}</span>
-                </div>
-              </div> : <>
+            {isLoggedIn && userData ? <button
+                onClick={() => setShowProfileDashboard(true)}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                {userData.profilePicture ? <img src={userData.profilePicture} alt={userData.firstName} className="w-10 h-10 rounded-full object-cover border-2 border-blue-600" /> : <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-white" />
+                  </div>}
+                <span className="text-white font-medium">{userData.firstName}</span>
+              </button> : <>
                 <button onClick={() => setShowLogin(true)} className="text-gray-300 hover:text-white px-4 py-2">
                   Login
                 </button>
@@ -440,5 +448,11 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
       setShowSignup(false);
       setShowLogin(true);
     }} onSignupSuccess={handleSignupSuccess} />
+      {userData && <ProfileDashboard
+        isOpen={showProfileDashboard}
+        onClose={() => setShowProfileDashboard(false)}
+        userData={userData}
+        onProfilePictureUpdate={handleProfilePictureUpdate}
+      />}
     </div>;
 };

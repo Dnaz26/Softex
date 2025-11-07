@@ -29,7 +29,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true
   },
   global: {
-    fetch: (url, options = {}) => {
+    fetch: (url, options: RequestInit = {}) => {
       console.log('🌐 Supabase Request:', { url, method: options.method });
       return fetch(url, {
         ...options,
