@@ -21,28 +21,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Key:', supabaseAnonKey ? 'Present' : 'MISSING');
 }
 
-// Create Supabase client with better error handling
+// Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true
-  },
-  global: {
-    fetch: (url: string | URL | Request, options?: RequestInit) => {
-      const fetchOptions: RequestInit = options || {};
-      console.log('🌐 Supabase Request:', { url, method: fetchOptions.method });
-      return fetch(url, {
-        ...fetchOptions,
-        headers: {
-          ...(fetchOptions.headers || {}),
-        },
-      }).catch((error) => {
-        console.error('❌ Fetch Error:', error);
-        throw error;
-      });
-    },
-  },
+  }
 });
 
 // Export types for TypeScript (optional, but recommended)
