@@ -357,8 +357,8 @@ export const InvestmentSurvey = ({
                 </>
               ) : (
                 <>
-                  {currentQuestion === questions.length - 1 ? "Submit" : "Next"}
-                  {currentQuestion < questions.length - 1 && <ChevronRight className="w-5 h-5" />}
+              {currentQuestion === questions.length - 1 ? "Submit" : "Next"}
+              {currentQuestion < questions.length - 1 && <ChevronRight className="w-5 h-5" />}
                 </>
               )}
             </button>

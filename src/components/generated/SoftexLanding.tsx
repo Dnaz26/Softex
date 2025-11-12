@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Search, Sparkles, ArrowRight, Instagram, Twitter, Star, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Sparkles, ArrowRight, Instagram, Twitter, Star, User, DollarSign } from 'lucide-react';
 import { AllListings } from './AllListings';
 import { AIAdvisorPanel } from './AIAdvisorPanel';
 import { MenuPanel } from './MenuPanel';
@@ -9,6 +9,7 @@ import { LoginScreen } from './LoginScreen';
 import { SignupScreen } from './SignupScreen';
 import { BusinessDetails } from './BusinessDetails';
 import { ProfileDashboard } from './ProfileDashboard';
+import { supabase } from '../../lib/supabase';
 type SoftexLandingProps = {};
 
 // @component: SoftexLanding
@@ -23,6 +24,7 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
   const [savedListings, setSavedListings] = useState<any[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [userData, setUserData] = useState<{
     firstName: string;
     profilePicture: string | null;
@@ -248,7 +250,8 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
     setUserData(data);
     setIsLoggedIn(true);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsLoggedIn(false);
     setUserData(null);
   };
@@ -260,6 +263,217 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
       });
     }
   };
+
+  // Helper function to sign in user from session
+  const signInUserFromSession = async (session: any) => {
+    if (!session?.user) return false;
+
+    try {
+      console.log('✅ Signing in user from session:', session.user.id);
+      
+      // Try to fetch user profile from database
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('first_name, profile_picture')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profileError || !profile) {
+        // Use auth user metadata as fallback
+        const firstName = session.user.user_metadata?.first_name || 
+                         session.user.email?.split('@')[0] || 
+                         'User';
+        console.log('Using auth metadata for user:', firstName);
+        handleLoginSuccess({
+          firstName,
+          profilePicture: null
+        });
+      } else {
+        console.log('Using profile data for user:', profile.first_name);
+        handleLoginSuccess({
+          firstName: profile.first_name || 'User',
+          profilePicture: profile.profile_picture
+        });
+      }
+      return true;
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      // Fallback to auth metadata if table doesn't exist
+      const firstName = session.user.user_metadata?.first_name || 
+                       session.user.email?.split('@')[0] || 
+                       'User';
+      handleLoginSuccess({
+        firstName,
+        profilePicture: null
+      });
+      return true;
+    }
+  };
+
+  // Check for existing session on mount and set up auth state listener
+  useEffect(() => {
+    let isMounted = true;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+
+    const checkSession = async (retry = false) => {
+      try {
+        if (!retry) {
+          setIsCheckingSession(true);
+        }
+        
+        console.log('🔍 Checking for existing session...');
+        
+        // Get current session - this should work immediately if session exists
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('❌ Error getting session:', sessionError);
+          // Retry if we haven't exceeded max retries
+          if (retryCount < MAX_RETRIES && isMounted) {
+            retryCount++;
+            console.log(`🔄 Retrying session check (${retryCount}/${MAX_RETRIES})...`);
+            setTimeout(() => checkSession(true), 1000 * retryCount);
+            return;
+          }
+          if (isMounted) {
+            setIsCheckingSession(false);
+          }
+          return;
+        }
+
+        if (session?.user) {
+          console.log('✅ Session found! User ID:', session.user.id, 'Email:', session.user.email);
+          // Session exists, sign in the user
+          if (isMounted) {
+            await signInUserFromSession(session);
+          }
+        } else {
+          console.log('ℹ️ No active session found in localStorage');
+          // Check localStorage directly as a fallback
+          try {
+            // Supabase stores session in localStorage with key pattern: sb-<project-ref>-auth-token
+            const supabaseKeys = Object.keys(localStorage).filter(key => 
+              key.includes('supabase') || key.includes('sb-') && key.includes('auth-token')
+            );
+            if (supabaseKeys.length > 0) {
+              console.log('📦 Found Supabase keys in localStorage:', supabaseKeys);
+              // Wait a bit and check again - Supabase might need time to initialize
+              setTimeout(async () => {
+                const { data: { session: retrySession } } = await supabase.auth.getSession();
+                if (retrySession?.user && isMounted) {
+                  console.log('✅ Session restored from localStorage!');
+                  await signInUserFromSession(retrySession);
+                } else {
+                  console.log('⚠️ No session found after localStorage check');
+                }
+              }, 500);
+            } else {
+              console.log('ℹ️ No Supabase session keys found in localStorage');
+            }
+          } catch (e) {
+            console.log('Error checking localStorage:', e);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error checking session:', error);
+      } finally {
+        if (isMounted && !retry) {
+          setIsCheckingSession(false);
+        }
+      }
+    };
+
+    // Check session immediately on mount
+    checkSession();
+
+    // Set up auth state change listener for automatic sign-in
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔄 Auth state changed:', event, session?.user?.id || 'no user');
+      
+      if (event === 'INITIAL_SESSION') {
+        console.log('🎯 INITIAL_SESSION event fired');
+        if (session?.user && isMounted) {
+          console.log('✅ Initial session detected, signing in user');
+          await signInUserFromSession(session);
+        }
+      } else if (event === 'SIGNED_IN') {
+        console.log('✅ SIGNED_IN event fired');
+        if (session?.user && isMounted) {
+          await signInUserFromSession(session);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        // User signed out
+        console.log('👋 User signed out');
+        if (isMounted) {
+          handleLogout();
+        }
+      } else if (event === 'TOKEN_REFRESHED') {
+        // Token refreshed, ensure user is still signed in
+        if (session?.user && isMounted) {
+          console.log('🔄 Token refreshed, ensuring user is signed in');
+          if (!isLoggedIn) {
+            await signInUserFromSession(session);
+          }
+        }
+      }
+    });
+
+    // Also check session after a short delay to catch any race conditions
+    const delayedCheck = setTimeout(() => {
+      if (isMounted && !isLoggedIn) {
+        console.log('🔄 Delayed session check...');
+        checkSession(true);
+      }
+    }, 1000);
+
+    // Cleanup subscription on unmount
+    return () => {
+      isMounted = false;
+      clearTimeout(delayedCheck);
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Double Ctrl key press to open AI chat
+  useEffect(() => {
+    let lastCtrlPressTime = 0;
+    let ctrlKeyDown = false;
+    const DOUBLE_PRESS_TIMEOUT = 300; // 300ms window for double press
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Detect when Control key itself is pressed (not when used as modifier)
+      if (e.key === 'Control' && !ctrlKeyDown) {
+        ctrlKeyDown = true;
+        const now = Date.now();
+        const timeSinceLastPress = now - lastCtrlPressTime;
+
+        // If pressed within the timeout window, it's a double press
+        if (timeSinceLastPress > 0 && timeSinceLastPress < DOUBLE_PRESS_TIMEOUT) {
+          e.preventDefault();
+          setShowAIAdvisor(true);
+          lastCtrlPressTime = 0; // Reset to prevent triple press
+        } else {
+          lastCtrlPressTime = now;
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Control') {
+        ctrlKeyDown = false;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
   if (selectedBusiness) {
     return <BusinessDetails business={selectedBusiness} onBack={() => setSelectedBusiness(null)} />;
   }
@@ -270,6 +484,7 @@ export const SoftexLanding = (props: SoftexLandingProps) => {
       <header className="border-b border-gray-900 px-6 py-4">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <DollarSign className="w-6 h-6 text-[#4169E1]" />
             <span className="text-xl font-semibold">Softex</span>
           </div>
           <div className="flex items-center gap-4">

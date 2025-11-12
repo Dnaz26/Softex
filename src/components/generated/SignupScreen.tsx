@@ -133,11 +133,11 @@ export const SignupScreen = ({
         }
         
         // Call success callback
-        onSignupSuccess({
-          firstName,
-          profilePicture
-        });
-        onClose();
+    onSignupSuccess({
+      firstName,
+      profilePicture
+    });
+    onClose();
       } else {
         throw new Error('User creation failed. Please try again.');
       }

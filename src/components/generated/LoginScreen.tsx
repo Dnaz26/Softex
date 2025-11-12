@@ -72,13 +72,13 @@ export const LoginScreen = ({
         } catch (err) {
           // Fallback to auth metadata if table doesn't exist
           const firstName = authData.user.user_metadata?.first_name || 'User';
-          onLoginSuccess({
+    onLoginSuccess({
             firstName,
-            profilePicture: null
-          });
+      profilePicture: null
+    });
         }
         
-        onClose();
+    onClose();
       }
     } catch (err: any) {
       console.error('Login error:', err);

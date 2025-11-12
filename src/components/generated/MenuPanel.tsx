@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Home, Heart, FileText, Settings, LogOut } from 'lucide-react';
+import { X, Home, Heart, FileText, Settings, LogOut, Filter } from 'lucide-react';
 type MenuPanelProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -7,6 +7,7 @@ type MenuPanelProps = {
   onNavigateHome?: () => void;
   onNavigateMyListings?: () => void;
   onNavigateSettings?: () => void;
+  onNavigateFilter?: () => void;
   onLogout?: () => void;
 };
 
@@ -18,6 +19,7 @@ export const MenuPanel = ({
   onNavigateHome,
   onNavigateMyListings,
   onNavigateSettings,
+  onNavigateFilter,
   onLogout
 }: MenuPanelProps) => {
   if (!isOpen) return null;
@@ -69,6 +71,23 @@ export const MenuPanel = ({
               <button onClick={handleSettingsClick} className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-800/50 rounded-lg transition-colors">
                 <Settings className="w-5 h-5" />
                 <span className="font-medium">Settings</span>
+              </button>
+            </nav>
+          </div>
+
+          {/* Settings Section */}
+          <div className="px-4 py-6 border-b border-gray-800">
+            <div className="flex items-center gap-2 mb-4">
+              <Settings className="w-5 h-5 text-gray-400" />
+              <h3 className="text-lg font-semibold text-white">Settings</h3>
+            </div>
+            <nav className="space-y-1">
+              <button onClick={() => {
+                onNavigateFilter?.();
+                onClose();
+              }} className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-800/50 rounded-lg transition-colors">
+                <Filter className="w-5 h-5" />
+                <span className="font-medium">Filter</span>
               </button>
             </nav>
           </div>

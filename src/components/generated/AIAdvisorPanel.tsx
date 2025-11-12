@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Sparkles, Send, Loader2 } from 'lucide-react';
+import { X, Sparkles, Send, Loader2, Plus, Trash2 } from 'lucide-react';
 import { InvestmentSurvey } from './InvestmentSurvey';
 import { SellerNameInput } from './SellerNameInput';
 import { SellerVerification } from './SellerVerification';
@@ -23,7 +23,7 @@ type AIAdvisorPanelProps = {
   onLogout?: () => void;
 };
 
-const STORAGE_KEY = 'ai_advisor_chat_messages';
+const STORAGE_KEY_PREFIX = 'ai_advisor_chat_messages_';
 
 // @component: AIAdvisorPanel
 export const AIAdvisorPanel = ({
@@ -31,10 +31,11 @@ export const AIAdvisorPanel = ({
   onClose,
   onLogout
 }: AIAdvisorPanelProps) => {
-  // Load messages from localStorage on mount
-  const loadMessages = (): Message[] => {
+  // Load messages for a specific chat from localStorage
+  const loadMessagesForChat = (chatId: string): Message[] => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const storageKey = `${STORAGE_KEY_PREFIX}${chatId}`;
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
         // If we have saved messages, use them
@@ -45,7 +46,7 @@ export const AIAdvisorPanel = ({
     } catch (error) {
       console.error('Error loading messages from localStorage:', error);
     }
-    // Default initial message
+    // Default initial message for new chats
     return [
       {
         id: '1',
@@ -57,7 +58,7 @@ export const AIAdvisorPanel = ({
   };
 
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>(loadMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showInvestmentSurvey, setShowInvestmentSurvey] = useState(false);
   const [showSellerNameInput, setShowSellerNameInput] = useState(false);
@@ -66,21 +67,38 @@ export const AIAdvisorPanel = ({
   const [showSellSoftwareForm, setShowSellSoftwareForm] = useState(false);
   const [showHelpScreen, setShowHelpScreen] = useState(false);
   const [showChatsScreen, setShowChatsScreen] = useState(false);
+  const [showDeleteChatPopup, setShowDeleteChatPopup] = useState(false);
+  const [chats, setChats] = useState<Array<{ id: string; name: string }>>([
+    { id: '1', name: 'Chat 1' },
+    { id: '2', name: 'Investment Help' },
+    { id: '3', name: 'Business Analysis' }
+  ]);
+  const [activeChatId, setActiveChatId] = useState('1');
+  const [selectedChatsToDelete, setSelectedChatsToDelete] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Save messages to localStorage whenever they change
+  // Load messages when active chat changes
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch (error) {
-      console.error('Error saving messages to localStorage:', error);
+    const chatMessages = loadMessagesForChat(activeChatId);
+    setMessages(chatMessages);
+  }, [activeChatId]);
+
+  // Save messages to localStorage whenever they change for the active chat
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        const storageKey = `${STORAGE_KEY_PREFIX}${activeChatId}`;
+        localStorage.setItem(storageKey, JSON.stringify(messages));
+      } catch (error) {
+        console.error('Error saving messages to localStorage:', error);
+      }
     }
     scrollToBottom();
-  }, [messages]);
+  }, [messages, activeChatId]);
 
 
   const handleMenuOptionClick = (option: number, optionName: string) => {
@@ -109,6 +127,8 @@ export const AIAdvisorPanel = ({
       onClose();
     } else if (option === 6) {
       setShowHelpScreen(true);
+    } else if (option === 7) {
+      setShowDeleteChatPopup(true);
     }
   };
 
@@ -152,6 +172,9 @@ export const AIAdvisorPanel = ({
       return;
     } else if (trimmedMsg === '6' || trimmedMsg.includes('help')) {
       setShowHelpScreen(true);
+      return;
+    } else if (trimmedMsg === '7' || (trimmedMsg.includes('delete') && trimmedMsg.includes('chat'))) {
+      setShowDeleteChatPopup(true);
       return;
     }
 
@@ -214,22 +237,49 @@ export const AIAdvisorPanel = ({
       
       {/* Panel */}
       <div className="fixed top-0 right-0 h-full w-[450px] bg-[#0B1A33] z-50 shadow-2xl flex flex-col border-l border-gray-800">
-        {/* Header - Royal Blue */}
-        <div className="bg-[#4169E1] px-6 py-5">
-          <div className="flex items-center justify-between">
+        {/* Header - Same background as panel */}
+        <div className="bg-[#0B1A33] px-6 py-5 border-b border-gray-800">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-white" />
               <h2 className="text-xl font-bold text-white">AI Advisor</h2>
             </div>
-            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-blue-700/30 rounded-lg transition-colors">
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors">
               <X className="w-5 h-5 text-white" />
             </button>
           </div>
-        </div>
-
-        {/* Subtitle */}
-        <div className="px-6 py-4 border-b border-blue-700/30">
-          <p className="text-blue-100 text-sm">Get personalized investment insights</p>
+          
+          {/* Chat Names - Horizontal Scrollable */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2">
+            <div className="flex items-center gap-2 flex-nowrap">
+              {/* Plus Icon - Moved to Left */}
+              <button
+                onClick={() => {
+                  const newChatId = (chats.length + 1).toString();
+                  const newChat = { id: newChatId, name: `Chat ${newChatId}` };
+                  setChats([...chats, newChat]);
+                  setActiveChatId(newChatId);
+                  // Messages will be loaded automatically via useEffect when activeChatId changes
+                }}
+                className="w-10 h-10 flex items-center justify-center bg-[#1e293b] hover:bg-[#2a3a52] text-gray-300 hover:text-white rounded-lg transition-colors flex-shrink-0"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+              {chats.map((chat) => (
+                <button
+                  key={chat.id}
+                  onClick={() => setActiveChatId(chat.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeChatId === chat.id
+                      ? 'bg-[#4169E1] text-white'
+                      : 'bg-[#1e293b] text-gray-300 hover:bg-[#2a3a52]'
+                  }`}
+                >
+                  {chat.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Chat Messages - BLACK BACKGROUND */}
@@ -303,6 +353,13 @@ export const AIAdvisorPanel = ({
                           <span className="text-blue-400 font-semibold">6.</span>
                           <span>Help</span>
                         </button>
+                        <button
+                          onClick={() => handleMenuOptionClick(7, 'Delete Chat')}
+                          className="w-full text-left px-4 py-3 rounded-lg bg-[#0B1A33] hover:bg-[#1a2942] text-gray-300 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-blue-400 font-semibold">7.</span>
+                          <span>Delete Chat</span>
+                        </button>
                       </div>
                     </div>
                   )}
@@ -356,5 +413,106 @@ export const AIAdvisorPanel = ({
       <SellSoftwareForm isOpen={showSellSoftwareForm} onClose={() => setShowSellSoftwareForm(false)} />
       <HelpScreen isOpen={showHelpScreen} onClose={() => setShowHelpScreen(false)} />
       <ChatsScreen isOpen={showChatsScreen} onClose={() => setShowChatsScreen(false)} />
+      
+      {/* Delete Chat Popup */}
+      {showDeleteChatPopup && (
+        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center">
+          <div className="bg-[#0B1A33] rounded-2xl w-[500px] max-h-[600px] flex flex-col border border-gray-800 shadow-2xl">
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-gray-800 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-white">Delete Chats</h3>
+              <button
+                onClick={() => {
+                  setShowDeleteChatPopup(false);
+                  setSelectedChatsToDelete(new Set());
+                }}
+                className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            
+            {/* Chat List */}
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              <div className="space-y-3">
+                {chats.map((chat) => {
+                  const isSelected = selectedChatsToDelete.has(chat.id);
+                  return (
+                    <div
+                      key={chat.id}
+                      onClick={() => {
+                        const newSelected = new Set(selectedChatsToDelete);
+                        if (isSelected) {
+                          newSelected.delete(chat.id);
+                        } else {
+                          newSelected.add(chat.id);
+                        }
+                        setSelectedChatsToDelete(newSelected);
+                      }}
+                      className="flex items-center gap-4 p-4 rounded-lg bg-[#1e293b] hover:bg-[#2a3a52] cursor-pointer transition-colors"
+                    >
+                      {/* Circle Checkbox */}
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        isSelected
+                          ? 'bg-[#4169E1] border-[#4169E1]'
+                          : 'border-gray-500 bg-transparent'
+                      }`}>
+                        {isSelected && (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <span className="text-white font-medium flex-1">{chat.name}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Delete Button */}
+            <div className="px-6 py-5 border-t border-gray-800">
+              <button
+                onClick={() => {
+                  if (selectedChatsToDelete.size === 0) return;
+                  
+                  // Delete selected chats and their localStorage data
+                  selectedChatsToDelete.forEach(chatId => {
+                    try {
+                      const storageKey = `${STORAGE_KEY_PREFIX}${chatId}`;
+                      localStorage.removeItem(storageKey);
+                    } catch (error) {
+                      console.error('Error deleting chat messages from localStorage:', error);
+                    }
+                  });
+                  
+                  const remainingChats = chats.filter(chat => !selectedChatsToDelete.has(chat.id));
+                  setChats(remainingChats);
+                  
+                  // If active chat was deleted, switch to first remaining chat or reset
+                  if (selectedChatsToDelete.has(activeChatId)) {
+                    if (remainingChats.length > 0) {
+                      setActiveChatId(remainingChats[0].id);
+                      // Messages will be loaded automatically via useEffect
+                    } else {
+                      // No chats left, create a new one
+                      const newChat = { id: '1', name: 'Chat 1' };
+                      setChats([newChat]);
+                      setActiveChatId('1');
+                      // Messages will be loaded automatically via useEffect
+                    }
+                  }
+                  
+                  setSelectedChatsToDelete(new Set());
+                  setShowDeleteChatPopup(false);
+                }}
+                disabled={selectedChatsToDelete.size === 0}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>;
 };

@@ -21,12 +21,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Key:', supabaseAnonKey ? 'Present' : 'MISSING');
 }
 
-// Create Supabase client
+// Create Supabase client with optimized session persistence
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+    flowType: 'pkce'
+  },
+  global: {
+    headers: {
+      'x-client-info': 'softex-web'
+    }
   }
 });
 

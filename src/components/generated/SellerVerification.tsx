@@ -63,7 +63,7 @@ export const SellerVerification = ({
                 <Loader2 className="w-16 h-16 text-[#4169E1] animate-spin mb-4" />
                 <p className="text-white text-lg font-semibold">Analyzing seller/business...</p>
                 <p className="text-gray-400 text-sm mt-2">Checking financials, history, and legitimacy</p>
-              </div>
+          </div>
             ) : error ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <XCircle className="w-16 h-16 text-red-500 mb-4" />
@@ -131,8 +131,8 @@ export const SellerVerification = ({
                   onClick={onClose}
                   className="w-full bg-[#4169E1] hover:bg-[#3557C1] text-white py-3 rounded-xl font-semibold transition-colors"
                 >
-                  Continue
-                </button>
+                Continue
+              </button>
               </div>
             ) : null}
           </div>

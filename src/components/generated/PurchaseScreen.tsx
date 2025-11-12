@@ -35,7 +35,7 @@ export const PurchaseScreen = ({
     cvv: '',
     nameOnCard: 'John Doe'
   });
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+  const [paymentMethod] = useState<'card'>('card');
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,7 +59,7 @@ export const PurchaseScreen = ({
         return;
       }
 
-      if (paymentMethod === 'card' && cardElementRef.current && !stripeCardElement) {
+      if (cardElementRef.current && !stripeCardElement) {
         try {
           const stripe = await getStripe();
           if (stripe && cardElementRef.current) {
@@ -101,55 +101,50 @@ export const PurchaseScreen = ({
         }
       }
     };
-  }, [paymentMethod]);
+  }, []);
 
   // Process payment with Stripe (checks funds and validates card)
   const processPayment = async (amount: number): Promise<{ success: boolean; error?: string; fraudDetected?: boolean }> => {
-    if (paymentMethod === 'card') {
-      // Validate card details first
-      const cardValidation = validateCard(
-        formData.cardNumber,
-        formData.expiryDate,
-        formData.cvv
-      );
+    // Validate card details first
+    const cardValidation = validateCard(
+      formData.cardNumber,
+      formData.expiryDate,
+      formData.cvv
+    );
 
-      if (!cardValidation.valid) {
-        return {
-          success: false,
-          error: cardValidation.errors.join(', '),
-        };
-      }
-
-      // Use Stripe card element if available
-      if (stripeCardElement) {
-        const result = await processStripePayment(
-          stripeCardElement,
-          amount,
-          formData.email,
-          formData.nameOnCard
-        );
-        return result;
-      }
-
-      // Fallback: Basic validation if Stripe not configured
-      const cleanCardNumber = formData.cardNumber.replace(/\s/g, '');
-      if (!cleanCardNumber || cleanCardNumber.length < 13) {
-        return { success: false, error: 'Invalid card number' };
-      }
-
-      // For demo without Stripe: Cards ending in even numbers succeed
-      const lastDigit = parseInt(cleanCardNumber[cleanCardNumber.length - 1]);
-      const hasFunds = lastDigit % 2 === 0;
-
-      if (hasFunds) {
-        return { success: true };
-      } else {
-        return { success: false, error: 'Insufficient funds in your account' };
-      }
+    if (!cardValidation.valid) {
+      return {
+        success: false,
+        error: cardValidation.errors.join(', '),
+      };
     }
 
-    // PayPal or other methods
-    return { success: true };
+    // Use Stripe card element if available
+    if (stripeCardElement) {
+      const result = await processStripePayment(
+        stripeCardElement,
+        amount,
+        formData.email,
+        formData.nameOnCard
+      );
+      return result;
+    }
+
+    // Fallback: Basic validation if Stripe not configured
+    const cleanCardNumber = formData.cardNumber.replace(/\s/g, '');
+    if (!cleanCardNumber || cleanCardNumber.length < 13) {
+      return { success: false, error: 'Invalid card number' };
+    }
+
+    // For demo without Stripe: Cards ending in even numbers succeed
+    const lastDigit = parseInt(cleanCardNumber[cleanCardNumber.length - 1]);
+    const hasFunds = lastDigit % 2 === 0;
+
+    if (hasFunds) {
+      return { success: true };
+    } else {
+      return { success: false, error: 'Insufficient funds in your account' };
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,7 +162,7 @@ export const PurchaseScreen = ({
       return;
     }
 
-    if (paymentMethod === 'card' && (!formData.cardNumber || !formData.expiryDate || !formData.cvv)) {
+    if (!formData.cardNumber || !formData.expiryDate || !formData.cvv) {
       setError('Please fill in all payment details.');
       return;
     }
@@ -181,24 +176,21 @@ export const PurchaseScreen = ({
       const totalAmount = businessPrice + taxes;
 
       // Process payment first (check if card has funds and validate)
-      let paymentResult;
-      if (paymentMethod === 'card') {
-        paymentResult = await processPayment(totalAmount);
+      const paymentResult = await processPayment(totalAmount);
+      
+      if (!paymentResult.success) {
+        // Payment failed - show failure page
+        setPaymentSuccess(false);
+        let errorMsg = paymentResult.error || 'Payment could not be processed';
         
-        if (!paymentResult.success) {
-          // Payment failed - show failure page
-          setPaymentSuccess(false);
-          let errorMsg = paymentResult.error || 'Payment could not be processed';
-          
-          if (paymentResult.fraudDetected) {
-            errorMsg = 'Payment declined due to security concerns. Please use a different payment method or contact support.';
-          }
-          
-          setPaymentError(errorMsg);
-          setShowPaymentResult(true);
-          setIsProcessing(false);
-          return;
+        if (paymentResult.fraudDetected) {
+          errorMsg = 'Payment declined due to security concerns. Please use a different payment method or contact support.';
         }
+        
+        setPaymentError(errorMsg);
+        setShowPaymentResult(true);
+        setIsProcessing(false);
+        return;
       }
 
       // Payment successful - create Escrow transaction
@@ -306,43 +298,19 @@ export const PurchaseScreen = ({
   }
 
   return <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-[#0B1A33] shadow-sm px-4 sm:px-6 lg:px-10 py-3">
-        <div className="max-w-[960px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-6 h-6 text-[#4169E1]">
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
-              </svg>
-            </div>
-            <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Software Marketplace</h2>
-          </div>
-          <button onClick={onBack} className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <div className="flex flex-col gap-8">
-          {/* Progress Indicator */}
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-6 justify-between">
-              <p className="text-white text-base font-medium leading-normal">Step 3 of 3: Confirm Investment</p>
-            </div>
-            <div className="rounded bg-gray-800">
-              <div className="h-2 rounded bg-[#4169E1]" style={{
-              width: '100%'
-            }}></div>
-            </div>
-          </div>
 
           {/* Title Section */}
           <div className="flex flex-wrap justify-between gap-3">
             <div className="flex min-w-72 flex-col gap-3">
-              <p className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">Secure Investment Confirmation</p>
+              <div className="flex items-center gap-4">
+                <button onClick={onBack} className="flex items-center justify-center w-10 h-10 hover:bg-gray-800 rounded-lg transition-colors">
+                  <ArrowLeft className="w-6 h-6 text-white" />
+                </button>
+                <p className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">Secure Investment Confirmation</p>
+              </div>
               <p className="text-gray-400 text-base font-normal leading-normal">Please review your information and confirm your investment. Your payment will be secured through Escrow.com.</p>
             </div>
           </div>
@@ -405,23 +373,7 @@ export const PurchaseScreen = ({
                 <section>
                   <h2 className="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-5">Payment Method</h2>
                   <div className="flex flex-col gap-4">
-                    <div className="flex gap-4">
-                      <button type="button" onClick={() => setPaymentMethod('card')} className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${paymentMethod === 'card' ? 'border-[#4169E1] bg-[#4169E1]/10 text-[#4169E1]' : 'border-gray-700 bg-[#1e293b] text-gray-400 hover:border-[#4169E1] hover:text-[#4169E1]'}`}>
-                        <CreditCard className="w-5 h-5" />
-                        <span className="font-medium">Credit Card</span>
-                      </button>
-                      <button type="button" onClick={() => setPaymentMethod('paypal')} className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${paymentMethod === 'paypal' ? 'border-[#4169E1] bg-[#4169E1]/10 text-[#4169E1]' : 'border-gray-700 bg-[#1e293b] text-gray-400 hover:border-[#4169E1] hover:text-[#4169E1]'}`}>
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3.32962 20.3207C4.30932 20.3207 5.10906 19.5312 5.10906 18.5515C5.10906 17.582 4.30932 16.7823 3.32962 16.7823C2.35002 16.7823 1.55018 17.582 1.55018 18.5515C1.55018 19.5312 2.35002 20.3207 3.32962 20.3207Z"></path>
-                          <path d="M19.3242 3.6792C18.9843 3.6792 18.7344 3.96904 18.7044 4.3089L17.3847 13.9155C17.3447 14.3453 17.6546 14.7151 18.0945 14.7551L21.4133 15.0149C21.8432 15.0549 22.2031 14.7551 22.2831 14.3253L23.9525 4.41885C24.0325 4.01897 23.7526 3.6792 23.3227 3.6792H19.3242Z"></path>
-                          <path d="M17.4346 13.8456L15.9349 4.20906C15.8949 3.92918 15.655 3.72925 15.3651 3.72925H10.1562C9.72635 3.72925 9.38647 4.02909 9.32652 4.45892L8.0368 13.9056C7.96684 14.3454 8.27672 14.7252 8.71661 14.7652L12.5956 15.1149C13.0255 15.1549 13.4054 14.8651 13.4853 14.4253L14.735 4.88849L16.0948 14.3554C16.1548 14.7952 16.5447 15.115 17.0045 15.075L18.0645 14.9851L17.4346 13.8456Z"></path>
-                          <path d="M8.07694 13.8855L6.68725 4.36898C6.63728 4.0291 6.36737 3.78921 6.01749 3.78921H0.908203L0.0384731 9.4271C-0.031501 9.84693 0.268388 10.2368 0.69827 10.2867L4.1272 10.6765C4.51711 10.7265 4.867 10.4566 4.94696 10.0567L5.35686 7.84759L5.95663 11.5162L5.2069 11.4162L5.80667 14.985C5.90662 15.5448 6.44645 15.9246 7.0163 15.8247L8.71618 15.5449L8.07694 13.8855Z"></path>
-                        </svg>
-                        <span className="font-medium">PayPal</span>
-                      </button>
-                    </div>
-
-                        {paymentMethod === 'card' && <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="sm:col-span-2">
                           <label className="flex flex-col flex-1">
                             <p className="text-white text-base font-medium leading-normal pb-2">Card Number</p>
@@ -438,9 +390,40 @@ export const PurchaseScreen = ({
                                 required 
                                 maxLength={19} 
                                 placeholder="**** **** **** ****" 
-                                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white bg-[#1e293b] border border-gray-700 focus:border-[#4169E1] h-14 placeholder:text-gray-500 pl-12 pr-4 py-[15px] text-base font-normal leading-normal" 
+                                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white bg-[#1e293b] border border-gray-700 focus:border-[#4169E1] h-14 placeholder:text-gray-500 pl-20 pr-20 py-[15px] text-base font-normal leading-normal" 
                               />
-                              <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                              {/* Card Logo Display */}
+                              <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                                {(() => {
+                                  const cardType = getCardType(formData.cardNumber);
+                                  if (cardType === 'visa') {
+                                    return (
+                                      <svg className="w-12 h-7" viewBox="0 0 120 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="120" height="75" rx="4" fill="#1434CB"/>
+                                        <text x="60" y="45" fontSize="28" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">VISA</text>
+                                      </svg>
+                                    );
+                                  } else if (cardType === 'mastercard') {
+                                    return (
+                                      <svg className="w-12 h-7" viewBox="0 0 120 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="120" height="75" rx="4" fill="#1A1F71"/>
+                                        <circle cx="42" cy="37.5" r="18" fill="#EB001B"/>
+                                        <circle cx="78" cy="37.5" r="18" fill="#F79E1B"/>
+                                        <path d="M60 37.5C60 28.5 55.5 20.5 49 15.5C42.5 20.5 38 28.5 38 37.5C38 46.5 42.5 54.5 49 59.5C55.5 54.5 60 46.5 60 37.5Z" fill="#FF5F00"/>
+                                      </svg>
+                                    );
+                                  } else if (cardType === 'amex') {
+                                    return (
+                                      <svg className="w-12 h-7" viewBox="0 0 120 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="120" height="75" rx="4" fill="#006FCF"/>
+                                        <text x="60" y="45" fontSize="20" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">AMEX</text>
+                                      </svg>
+                                    );
+                                  } else {
+                                    return <CreditCard className="w-5 h-5 text-gray-400" />;
+                                  }
+                                })()}
+                              </div>
                               {/* Stripe Card Element Container - Hidden, only used if Stripe is properly configured */}
                               {stripeCardElement && (
                                 <div 
@@ -488,7 +471,7 @@ export const PurchaseScreen = ({
                             <input type="text" name="nameOnCard" value={formData.nameOnCard} onChange={handleInputChange} autoComplete="cc-name" required className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white bg-[#1e293b] border border-gray-700 focus:border-[#4169E1] h-14 placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal" />
                           </label>
                         </div>
-                      </div>}
+                        </div>
                   </div>
                 </section>
               </div>

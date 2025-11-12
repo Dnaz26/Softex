@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, Menu as MenuIcon, MapPin, DollarSign, TrendingUp, Star, Filter } from 'lucide-react';
+import { ArrowLeft, Sparkles, Menu as MenuIcon, MapPin, DollarSign, TrendingUp, Star } from 'lucide-react';
 import { AIAdvisorPanel } from './AIAdvisorPanel';
 import { MenuPanel } from './MenuPanel';
 import { BusinessDetails } from './BusinessDetails';
+import { FilterPopup } from './FilterPopup';
 type AllListingsProps = {
   onBack: () => void;
   savedListings: any[];
@@ -36,6 +37,9 @@ export const AllListings = ({
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [priceRange, setPriceRange] = useState<string>('all');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [selectedInvestmentTypes, setSelectedInvestmentTypes] = useState<string[]>([]);
   const listings = [{
     id: 1,
     title: 'The Artisan Cafe',
@@ -623,7 +627,7 @@ export const AllListings = ({
       filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
-    // Price filter
+    // Price range filter (preset ranges)
     if (priceRange !== 'all') {
       filtered = filtered.filter(item => {
         const price = parseInt(item.price.replace(/[$,]/g, ''));
@@ -633,6 +637,38 @@ export const AllListings = ({
         return true;
       });
     }
+
+    // Custom min/max price filter
+    if (minPrice) {
+      const min = parseInt(minPrice);
+      if (!isNaN(min)) {
+        filtered = filtered.filter(item => {
+          const price = parseInt(item.price.replace(/[$,]/g, ''));
+          return price >= min;
+        });
+      }
+    }
+
+    if (maxPrice) {
+      const max = parseInt(maxPrice);
+      if (!isNaN(max)) {
+        filtered = filtered.filter(item => {
+          const price = parseInt(item.price.replace(/[$,]/g, ''));
+          return price <= max;
+        });
+      }
+    }
+
+    // Investment type filter (if any types are selected)
+    if (selectedInvestmentTypes.length > 0) {
+      // Note: This would need to match against listing data. For now, we'll filter by category
+      // You may want to add an 'investmentType' field to your listings data
+      filtered = filtered.filter(item => {
+        // This is a placeholder - adjust based on your actual data structure
+        return true; // For now, don't filter by investment type until data structure is updated
+      });
+    }
+
     return filtered;
   };
   const filteredListings = filterListings(listings);
@@ -664,11 +700,6 @@ export const AllListings = ({
           <h1 className="text-2xl font-bold absolute left-1/2 -translate-x-1/2">All Listings</h1>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowFilters(!showFilters)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors relative">
-              <Filter className="w-6 h-6 text-white" />
-              {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full" />}
-            </button>
-
             <button onClick={() => setShowAIAdvisor(true)} className="flex items-center justify-center w-12 h-12 hover:bg-gray-900 rounded-lg transition-colors">
               <Sparkles className="w-6 h-6 text-white" />
             </button>
@@ -680,42 +711,6 @@ export const AllListings = ({
         </div>
       </header>
 
-      {/* Filter Panel */}
-      {showFilters && <div className="border-b border-gray-900 bg-[#0B1A33]">
-          <div className="max-w-[1400px] mx-auto px-6 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">Category</label>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map(cat => <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedCategory === cat ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`}>
-                      {cat === 'all' ? 'All Categories' : cat}
-                    </button>)}
-                </div>
-              </div>
-
-              {/* Price Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">Price Range</label>
-                <div className="flex flex-wrap gap-2">
-                  {priceRanges.map(range => <button key={range.value} onClick={() => setPriceRange(range.value)} className={`px-4 py-2 rounded-lg font-medium transition-colors ${priceRange === range.value ? 'bg-[#4169E1] text-white' : 'bg-[#1a2942] text-gray-300 hover:bg-[#243552]'}`}>
-                      {range.label}
-                    </button>)}
-                </div>
-              </div>
-            </div>
-
-            {/* Clear Filters */}
-            {(selectedCategory !== 'all' || priceRange !== 'all') && <div className="mt-4 flex justify-end">
-                <button onClick={() => {
-            setSelectedCategory('all');
-            setPriceRange('all');
-          }} className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Clear all filters
-                </button>
-              </div>}
-          </div>
-        </div>}
 
       {/* Main Content */}
       <main className="max-w-[1400px] mx-auto px-6 py-8">
@@ -794,6 +789,10 @@ export const AllListings = ({
     }} onNavigateSettings={() => {
       setShowMenu(false);
       alert('Settings feature coming soon!');
+    }} onNavigateFilter={() => {
+      setShowMenu(false);
+      setShowFilters(true);
     }} onLogout={onLogout} />
+      <FilterPopup isOpen={showFilters} onClose={() => setShowFilters(false)} minPrice={minPrice} maxPrice={maxPrice} selectedInvestmentTypes={selectedInvestmentTypes} onMinPriceChange={setMinPrice} onMaxPriceChange={setMaxPrice} onInvestmentTypesChange={setSelectedInvestmentTypes} selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} priceRange={priceRange} onPriceRangeChange={setPriceRange} />
     </div>;
 };

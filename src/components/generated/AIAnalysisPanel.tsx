@@ -41,7 +41,7 @@ export const AIAnalysisPanel = ({
         .catch((err) => {
           console.error('Error analyzing business:', err);
           setError(err instanceof Error ? err.message : 'Failed to analyze business');
-          setIsAnalyzing(false);
+        setIsAnalyzing(false);
         });
     }
   }, [isOpen, business]);
